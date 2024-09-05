@@ -8,7 +8,7 @@ const Button = (props: TButtonProps) => {
   return (
     <>
       <button
-        className={twMerge(`bg-black text-white text-base font-medium w-full h-[56px] rounded`, className)}
+        className={twMerge('w-full h-[56px] rounded bg-black text-white text-base font-semibold', className)}
         {...rest}
       >
         {children}
