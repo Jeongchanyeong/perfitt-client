@@ -1,16 +1,39 @@
+import { useEffect, useRef } from "react";
+
 const SignInAutoKeyword = () => {
+    const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
     const apiKeyWords = [
       '키워드1', 
       '키워드2', 
       '키워드3',
-      '키워드4',  // 더 많은 키워드 추가
-      '키워드5'
-    ];
+    ]; // 추천 키워드 
+
+    useEffect(()=>{
+        const scrollContainer = scrollContainerRef.current;
+
+        const onWheel = (e:WheelEvent) => {
+            e.preventDefault();
+            // console.log('Wheel event detected:', e.deltaY); // 휠을 쓸 때마다 콘솔에서 확인가능 (메모이제이션 필요)
+            if (scrollContainer) {
+                scrollContainer.scrollLeft += e.deltaY; // 마우스 휠의 Y 축 움직임을 가로 스크롤로 변환
+              }
+            };
+        if (scrollContainer) {
+            scrollContainer.addEventListener('wheel',onWheel);
+        }
+        return () => {
+            if(scrollContainer) {
+                scrollContainer.removeEventListener('wheel', onWheel);
+            }
+        }
+    },[]);
   
     const onClickKeyWord = () => {} // 키워드를 눌렀을 때 발생하는 이벤트
   
     return (
-      <div className="flex gap-2 px-4 overflow-x-auto scrollbar-hide"> {/* 스크롤 및 스크롤바 숨김 */}
+      <div ref={scrollContainerRef}
+      className="flex gap-2 py-[10px] overflow-x-auto scrollbar-hide"> {/* 스크롤 및 스크롤바 숨김 */}
         {apiKeyWords.map((keyword, index) => (
           <div 
             onClick={onClickKeyWord} 
