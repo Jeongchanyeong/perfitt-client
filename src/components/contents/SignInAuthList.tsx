@@ -11,7 +11,7 @@ const SignInAuthList = () => {
   return (
     <>
       <div className="w-[226px] rounded-md border-[#F5F5F5] border p-2">
-        <span className="text-[17px] mb-[6px] block font-semibold leading-[17px]">맞춤 상품 추천</span>
+        <span className="text-[14px] mb-[6px] block font-semibold leading-[17px]">맞춤 상품 추천</span>
         <div>
           {apiPosting.map((items, index) => (
             <div key={index} className="flex items-center mb-[6px]">
