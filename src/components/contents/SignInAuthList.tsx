@@ -18,10 +18,10 @@ const SignInAuthList = () => {
               <div className="w-[52px] h-[52px] rounded bg-[#F5F5F5]">
                 <img className="w-[48px] h-[50px]" src={items.itemImg} alt={items.item} />
               </div>
-              <div className="ml-2">
-                <p className="text-[12px] font-normal leading-[18px]">{items.brandname}</p>
-                <p className="text-[12px] font-semibold leading-[16px]">{items.item}</p>
-                <p className="text-[12px] font-semibold leading-[16px]">{items.price.toLocaleString()}원</p>
+              <div className="ml-2 text-[12px]">
+                <p className="font-normal leading-[18px]">{items.brandname}</p>
+                <p className="font-semibold leading-[16px]">{items.item}</p>
+                <p className="font-semibold leading-[16px]">{items.price.toLocaleString()}원</p>
               </div>
             </div>
           ))}
