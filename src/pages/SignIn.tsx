@@ -1,11 +1,4 @@
-
-
-
 const SignIn = () => {
-  return (
-    <>
-    
-    </>
-  );
-}
-export default SignIn
+  return <></>;
+};
+export default SignIn;
