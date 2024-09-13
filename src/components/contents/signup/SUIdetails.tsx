@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { TUserHandlers, TUserInfo } from '../../../types/sign';
+import { useState, useMemo } from 'react';
 import SUSelect from './SUSelect';
 import SUIbtn from './SUIbtn';
 import infoicon from '../../../assets/images/icon_info_blue400.png';
+import { Controller, useForm } from 'react-hook-form';
 
-interface SUIdetailsProps {
-  userInfo: TUserInfo;
-  userHandlers: TUserHandlers;
-}
-
-const SUIdetails = ({ userInfo, userHandlers }: SUIdetailsProps) => {
+const SUIdetails = () => {
   const [selectedSizeType, setSelectedSizeType] = useState<string>('');
+  const { control, setValue } = useForm({
+    defaultValues: {
+      usersize: '', // 기본 값
+    },
+  });
 
   const userSizeType = [
     {
@@ -49,31 +49,35 @@ const SUIdetails = ({ userInfo, userHandlers }: SUIdetailsProps) => {
     // 여성 사이즈 배열 생성
     const femaleSize = Array.from({ length: Math.floor((female[1] - female[0]) / gap) + 1 }, (_, i) => {
       const size = female[0] + i * gap;
-      return sizeType === 'mm'
-        ? `${size} mm / 여성` // mm일 때는 숫자 뒤에 단위 붙임
-        : `${sizeType} ${size} / 여성`; // EU나 US일 때는 숫자 앞에 단위 붙임
+      return sizeType === 'mm' ? `${size} mm / 여성` : `${sizeType} ${size} / 여성`;
     });
 
     // 남성 사이즈 배열 생성
     const maleSize = Array.from({ length: Math.floor((male[1] - male[0]) / gap) + 1 }, (_, i) => {
       const size = male[0] + i * gap;
-      return sizeType === 'mm'
-        ? `${size} mm / 남성` // mm일 때는 숫자 뒤에 단위 붙임
-        : `${sizeType} ${size} / 남성`; // EU나 US일 때는 숫자 앞에 단위 붙임
+      return sizeType === 'mm' ? `${size} mm / 남성` : `${sizeType} ${size} / 남성`;
     });
 
     return femaleSize.concat(maleSize);
   };
 
+  const sizeOptions = useMemo(() => getSizeOptions(selectedSizeType), [selectedSizeType]);
+
   const handleSizeTypeClick = (sizeType: string) => {
     setSelectedSizeType(sizeType);
+    const newSizeOptions = getSizeOptions(sizeType);
 
-    if (!getSizeOptions(sizeType).includes(userHandlers.userInfoSearch.usersize)) {
-      userHandlers.handleSelectChange('usersize', '');
+    // 현재 선택된 사이즈가 새로운 사이즈 옵션에 포함되지 않으면 비웁니다.
+    if (!newSizeOptions.includes(control._formValues.usersize)) {
+      handleSelectChange('usersize', '');
     }
   };
 
-  const sizeOptions = getSizeOptions(selectedSizeType);
+  // name: 'usersize'를 문자열 리터럴로 명시합니다.
+  const handleSelectChange = (name: 'usersize', value: string) => {
+    // useForm의 setValue를 사용하여 폼 필드 값을 업데이트합니다.
+    setValue(name, value);
+  };
 
   return (
     <>
@@ -105,20 +109,16 @@ const SUIdetails = ({ userInfo, userHandlers }: SUIdetailsProps) => {
           </div>
         </label>
         <div className='mb-6'>
-          <SUSelect
-            title='평소 신는 스니커즈 사이즈'
-            className='px-4 py-3.5'
-            type='text'
-            id='usersize'
-            value={userHandlers.userInfoSearch.usersize}
-            placeholder='사이즈를 선택해 주세요'
-            onChange={e => userHandlers.handleSelectChange(e.target.id, e.target.value)}
-            handleSelectChange={value => userHandlers.handleSelectChange('usersize', value)}
-            handleChange={value => userHandlers.handleChange('usersize', value)}
-            options={sizeOptions}
-            selectedOption={userInfo.usersize}
-            selectOpen={userHandlers.selectOpen}
-            setSelectOpen={userHandlers.setSelectOpen}
+          <Controller
+            name='usersize'
+            control={control}
+            render={({ field }) => (
+              <SUSelect
+                optionData={sizeOptions.map(option => ({ key: option, value: option }))}
+                className='px-4 py-3.5'
+                {...field}
+              />
+            )}
           />
         </div>
         <div className='w-full h-[104px] rounded-lg p-4 bg-[#EFF6FF] flex items-start mb-10'>
