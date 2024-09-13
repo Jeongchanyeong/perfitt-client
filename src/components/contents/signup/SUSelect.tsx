@@ -2,26 +2,26 @@ import { downArrowIcon } from '../../../assets/images/images';
 import { TSUInputProps } from '../../../types/sign';
 import SUInput from './SUInput';
 
-type TSUSelectProps = TSUInputProps & {
+type TSUSelectProps = {
   selectOpen: string;
   setSelectOpen: React.Dispatch<React.SetStateAction<string>>;
   options: string[];
   selectedOption: string;
   handleSelectChange: (value: string) => void;
-  handleChange: (value: string) => void;
-};
+  handleChange?: (value: string) => void; // 선택적 변경
+} & TSUInputProps;
 
 function SUSelect(props: TSUSelectProps) {
   const {
     selectOpen,
     setSelectOpen,
-    value,
     options,
     selectedOption,
     handleSelectChange,
     handleChange,
     className,
     id,
+    value,
     ...rest
   } = props;
 
@@ -31,8 +31,12 @@ function SUSelect(props: TSUSelectProps) {
   };
 
   const handleOptionClick = (option: string) => {
+    console.log('Option Clicked: {option}');
     handleSelectChange(option);
-    handleChange(option);
+    if (handleChange) {
+      console.log('handleChange is called with:', option);
+      handleChange(option);
+    }
     setSelectOpen('');
   };
 
@@ -45,7 +49,7 @@ function SUSelect(props: TSUSelectProps) {
         <SUInput
           className={className}
           id={id}
-          value={value}
+          value={selectedOption}
           {...rest}
         />
         <span className={`absolute right-[1px] bottom-[1px] z-10 ${className}`}>

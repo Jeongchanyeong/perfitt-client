@@ -1,12 +1,15 @@
 export type TSUInputProps = Omit<React.ComponentPropsWithoutRef<'input'>, 'type'> & {
-  type: 'text' | 'password' | 'email' | 'number' | 'date';
-  title?: string;
+  className?: string;
+  id: string;
+  value?: string;
+  placeholder?: string;
+  type?: string;
+  label?: string;
   className: string;
+  helperText?: string;
+  isError: boolean;
 };
 export type TUserInfo = {
-  email: string;
-  password: string;
-  name: string;
   gender: string;
   year: string;
   month: string;

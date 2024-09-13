@@ -1,18 +1,26 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SUInput from './SUInput';
 import SUSelect from './SUSelect';
 import { TUserHandlers, TUserInfo } from '../../../types/sign';
 import Button from '../../common/Button';
-
 import Header from '../../common/Header';
 import SUIdetails from './SUIdetails';
+import { Controller, useForm } from 'react-hook-form';
 
 function SUInfo() {
   const [state, setState] = useState('start');
+
+  // useForm 사용
+  const { control, handleSubmit } = useForm();
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
+
+  // const password: React.MutableRefObject<string | undefined> = useRef();
+  // password.current = watch('password');
+
   const [userInfo, setUserInfo] = useState<TUserInfo>({
-    email: '',
-    password: '',
-    name: '',
     gender: '',
     year: '',
     month: '',
@@ -35,14 +43,16 @@ function SUInfo() {
 
   const [selectOpen, setSelectOpen] = useState('');
 
-  const handleChange = (id: string, value: string) => {
-    setUserInfo(prev => ({
+  const handleSelectChange = (id: string, value: string) => {
+    console.log(`handleSelectChange - id: ${id}, value: ${value}`);
+    setUserInfoSearch(prev => ({
       ...prev,
       [id]: value,
     }));
   };
-  const handleSelectChange = (id: string, value: string) => {
-    setUserInfoSearch(prev => ({
+  const handleChange = (id: string, value: string) => {
+    console.log(`handleSelectChange - id: ${id}, value: ${value}`);
+    setUserInfo(prev => ({
       ...prev,
       [id]: value,
     }));
@@ -51,56 +61,85 @@ function SUInfo() {
   const userHandlers: TUserHandlers = {
     userInfoSearch,
     handleSelectChange,
-    handleChange,
+    handleChange: (id: string, value: string) => {
+      setUserInfo(prev => ({
+        ...prev,
+        [id]: value,
+      }));
+    },
     selectOpen,
     setSelectOpen,
   };
+
   return (
     <>
       <div className='rounded-t-lg'>
         {state === 'start' ? (
-          <form
-            onSubmit={e => {
-              e.preventDefault();
-            }}
-          >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Header title='회원가입'></Header>
             <div className='flex flex-col gap-4 mb-10'>
-              <SUInput
-                title='아이디'
-                className='px-4 py-3.5'
-                type='text'
-                id='email'
-                value={userInfo.email}
-                placeholder='이메일을 입력해 주세요'
-                onChange={e => handleChange(e.target.id, e.target.value)}
+              <Controller
+                name='email'
+                control={control}
+                defaultValue=''
+                rules={{ required: '이메일을 입력해 주세요' }}
+                render={({ field, fieldState }) => (
+                  <SUInput
+                    label='아이디'
+                    className='px-4 py-3.5'
+                    id='email' // id를 명시적으로 설정
+                    {...field} // field 객체를 그대로 전달
+                    placeholder='이메일을 입력해 주세요'
+                    isError={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
-              <SUInput
-                title='비밀번호'
-                className='px-4 py-3.5'
-                type='password'
-                id='password'
-                value={userInfo.password}
-                placeholder='비밀번호를 입력해 주세요'
-                onChange={e => handleChange(e.target.id, e.target.value)}
+              <Controller
+                name='password'
+                control={control}
+                defaultValue=''
+                rules={{
+                  required: { value: true, message: '비밀번호를 입력해주세요' },
+                  minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다' },
+                }}
+                render={({ field, fieldState }) => (
+                  <SUInput
+                    label='비밀번호'
+                    className='px-4 py-3.5'
+                    type='password'
+                    id='password'
+                    {...field}
+                    placeholder='비밀번호를 입력해 주세요'
+                    isError={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
-              <SUInput
-                title='이름'
-                className='px-4 py-3.5'
-                type='text'
-                id='name'
-                value={userInfo.name}
-                placeholder='이름을 입력해 주세요'
-                onChange={e => handleChange(e.target.id, e.target.value)}
+              <Controller
+                name='name'
+                control={control}
+                defaultValue=''
+                rules={{ required: { value: true, message: '이름을 입력해주세요' } }}
+                render={({ field, fieldState }) => (
+                  <SUInput
+                    label='이름'
+                    className='px-4 py-3.5'
+                    type='text'
+                    id='name'
+                    {...field}
+                    placeholder='이름을 입력해 주세요'
+                    isError={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
               <SUSelect
-                title='성별'
+                label='성별'
                 className='px-4 py-3.5'
-                type='text'
                 id='gender'
                 value={userInfoSearch.gender}
                 placeholder='성별을 선택해 주세요'
-                onChange={e => handleSelectChange(e.target.id, e.target.value)}
                 handleSelectChange={value => handleSelectChange('gender', value)}
                 handleChange={value => handleChange('gender', value)}
                 options={['여자', '남자']}
@@ -110,13 +149,12 @@ function SUInfo() {
               />
               <div className='flex gap-1'>
                 <SUSelect
-                  title='생년월일'
+                  label='생년월일'
                   className='px-2.5 py-[12.5px]'
                   type='text'
                   id='year'
                   value={userInfoSearch.year}
                   placeholder='년'
-                  onChange={e => handleSelectChange(e.target.id, e.target.value)}
                   handleSelectChange={value => handleSelectChange('year', value)}
                   handleChange={value => handleChange('year', value)}
                   options={yearList}
