@@ -4,42 +4,60 @@ import SUSelect from './SUSelect';
 import Button from '../../common/Button';
 import Header from '../../common/Header';
 import SUIdetails from './SUIdetails';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, FormProvider } from 'react-hook-form';
+import { FormValues } from '../../../types/sign';
 
 function SUInfo() {
-  const [state, setState] = useState('start');
+  const [state, setState] = useState<'start' | 'end'>('start');
 
-  const { control, handleSubmit } = useForm();
+  const methods = useForm<FormValues>({
+    defaultValues: {
+      email: '',
+      password: '',
+      name: '',
+      gender: '',
+      year: '',
+      month: '',
+      day: '',
+      usersize: '', // 초기 값을 빈 문자열로 설정
+    },
+  });
 
-  const onSubmit = (data: any) => {
+  const { handleSubmit, control } = methods;
+
+  const onSubmit = (data: FormValues) => {
     console.log(data);
+    // 여기에 제출 후 처리 로직 추가
+    setState('end'); // 제출 후 상태를 'end'로 변경
   };
-
-  // const password: React.MutableRefObject<string | undefined> = useRef();
-  // password.current = watch('password');
 
   const yearList = Array.from({ length: 70 }, (_, i) => ({ key: i, value: `${i + 1955}년` }));
   const monthList = Array.from({ length: 12 }, (_, i) => ({ key: i, value: `${i + 1}월` }));
   const dayList = Array.from({ length: 31 }, (_, i) => ({ key: i, value: `${i + 1}일` }));
 
   return (
-    <>
+    <FormProvider {...methods}>
       <div className='rounded-t-lg'>
         {state === 'start' ? (
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Header title='회원가입'></Header>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <Header title='회원가입' />
             <div className='flex flex-col gap-4 mb-10'>
               <Controller
                 name='email'
                 control={control}
-                defaultValue=''
-                rules={{ required: '이메일을 입력해 주세요' }}
+                rules={{
+                  required: '이메일을 입력해 주세요',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
+                    message: '이메일 형식이 아닙니다.',
+                  },
+                }}
                 render={({ field, fieldState }) => (
                   <SUInput
                     label='아이디'
                     className='px-4 py-3.5'
-                    id='email' // id를 명시적으로 설정
-                    {...field} // field 객체를 그대로 전달
+                    id='email'
+                    {...field}
                     placeholder='이메일을 입력해 주세요'
                     isError={!!fieldState.error}
                     helperText={fieldState.error?.message}
@@ -49,7 +67,6 @@ function SUInfo() {
               <Controller
                 name='password'
                 control={control}
-                defaultValue=''
                 rules={{
                   required: { value: true, message: '비밀번호를 입력해주세요' },
                   minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다' },
@@ -70,14 +87,13 @@ function SUInfo() {
               <Controller
                 name='name'
                 control={control}
-                defaultValue=''
                 rules={{ required: { value: true, message: '이름을 입력해주세요' } }}
                 render={({ field, fieldState }) => (
                   <SUInput
                     label='이름'
                     className='px-4 py-3.5'
                     type='text'
-                    id='name'
+                    id='username'
                     {...field}
                     placeholder='이름을 입력해 주세요'
                     isError={!!fieldState.error}
@@ -88,28 +104,32 @@ function SUInfo() {
               <Controller
                 name='gender'
                 control={control}
-                defaultValue=''
+                defaultValue='' // 기본 값 설정
                 render={({ field }) => (
                   <SUSelect
+                    label='성별'
                     optionData={[
                       { key: 'female', value: '여자' },
                       { key: 'male', value: '남자' },
                     ]}
-                    className='px-4 py-3.5'
+                    className='w-full rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                     value={field.value}
                     onChange={field.onChange}
+                    placeholder='성별을 선택해 주세요'
                   />
                 )}
               />
-              <div className='flex gap-1'>
+              <div className='flex gap-1 '>
                 <Controller
                   name='year'
                   control={control}
                   defaultValue='' // 기본 값 설정
                   render={({ field }) => (
                     <SUSelect
+                      label='생년월일'
                       optionData={yearList}
-                      className='px-2.5 py-[12.5px]'
+                      className='rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
+                      placeholder='년'
                       value={field.value} // field value 사용
                       onChange={field.onChange} // field.onChange 사용
                     />
@@ -122,9 +142,10 @@ function SUInfo() {
                   render={({ field }) => (
                     <SUSelect
                       optionData={monthList}
-                      className='px-2.5 py-[12.5px]'
+                      className=' rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                       value={field.value}
                       onChange={field.onChange}
+                      placeholder='월'
                     />
                   )}
                 />
@@ -135,9 +156,10 @@ function SUInfo() {
                   render={({ field }) => (
                     <SUSelect
                       optionData={dayList}
-                      className='px-2.5 py-[12.5px]'
+                      className='rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                       value={field.value}
                       onChange={field.onChange}
+                      placeholder='일'
                     />
                   )}
                 />
@@ -148,8 +170,18 @@ function SUInfo() {
           <SUIdetails />
         )}
       </div>
-      <Button onClick={() => setState('end')}>{state === 'start' ? '다음' : '가입완료'}</Button>
-    </>
+      <Button
+        onClick={() => {
+          if (state === 'start') {
+            handleSubmit(onSubmit)(); // 폼 제출
+          } else {
+            setState('start');
+          }
+        }}
+      >
+        {state === 'start' ? '다음' : '가입완료'}
+      </Button>
+    </FormProvider>
   );
 }
 

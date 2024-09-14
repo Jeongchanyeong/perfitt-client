@@ -29,4 +29,6 @@ const SUInput = forwardRef<HTMLInputElement, TSUInputProps>((props, ref) => {
   );
 });
 
+SUInput.displayName = 'SUInput'; // 디버깅용
+
 export default SUInput;

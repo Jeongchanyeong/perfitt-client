@@ -1,4 +1,4 @@
-export type TSUInputProps = Omit<React.ComponentPropsWithoutRef<'input'>, 'type'> & {
+export type TSUInputProps = Omit<React.ComponentPropsWithRef<'input'>, 'type'> & {
   className?: string;
   id?: string;
   value?: string;
@@ -15,4 +15,14 @@ export type TSelectOption = {
   color: string;
   isFixed?: boolean;
   isDisabled?: boolean;
+};
+export type FormValues = {
+  email: string;
+  password: string;
+  name: string;
+  gender: string | number;
+  year: string | number;
+  month: string | number;
+  day: string | number;
+  usersize: string;
 };

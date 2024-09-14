@@ -1,83 +1,65 @@
-import { downArrowIcon } from '../../../assets/images/images';
-import { TSUInputProps } from '../../../types/sign';
-import SUInput from './SUInput';
+import React, { forwardRef } from 'react';
+import Select, { ActionMeta, SingleValue } from 'react-select';
+import { Placeholder } from 'react-select/animated';
 
-type TSUSelectProps = {
-  selectOpen: string;
-  setSelectOpen: React.Dispatch<React.SetStateAction<string>>;
-  options: string[];
-  selectedOption: string;
-  handleSelectChange: (value: string) => void;
-  handleChange?: (value: string) => void; // 선택적 변경
-} & TSUInputProps;
+// Option 타입 정의
+type Option = {
+  key: string | number;
+  value: string;
+};
 
-function SUSelect(props: TSUSelectProps) {
-  const {
-    selectOpen,
-    setSelectOpen,
-    options,
-    selectedOption,
-    handleSelectChange,
-    handleChange,
-    className,
-    id,
-    value,
-    ...rest
-  } = props;
+// SUSelect 프롭스 타입 정의
+type TSelectProps = {
+  optionData: Option[];
+  className: string;
+  value: string | number; // 선택된 값
+  onChange: (value: string | number) => void; // 값 변경 핸들러
+  placeholder?: string;
+  label?: string;
+};
 
-  const handleClick = () => {
-    if (selectOpen === id) setSelectOpen('');
-    else setSelectOpen(typeof id === 'string' ? id : '');
-  };
+// forwardRef로 SUSelect 컴포넌트 정의
+const SUSelect = forwardRef<HTMLDivElement, TSelectProps>(
+  ({ optionData, className, value, onChange, placeholder, label }, ref) => {
+    // react-select에서 사용하는 형식으로 optionData 변환
+    const options = optionData.map(option => ({
+      value: option.key,
+      label: option.value,
+    }));
 
-  const handleOptionClick = (option: string) => {
-    console.log('Option Clicked: {option}');
-    handleSelectChange(option);
-    if (handleChange) {
-      console.log('handleChange is called with:', option);
-      handleChange(option);
-    }
-    setSelectOpen('');
-  };
+    // react-select에서 요구하는 value 형식으로 처리
+    const selectedOption = options.find(option => option.value === value) || null;
 
-  return (
-    <div className='relative cursor-pointer'>
+    // 선택 변경 시 핸들러
+    const handleChange = (
+      newValue: SingleValue<{ value: string | number; label: string }>,
+      actionMeta: ActionMeta<{ value: string | number; label: string }>
+    ) => {
+      if (newValue) {
+        onChange(newValue.value); // 선택된 값이 있을 때 onChange 호출
+      } else {
+        onChange(''); // 값이 없을 때(클리어 시) 빈 문자열 전달
+      }
+    };
+
+    return (
       <div
-        className='cursor-pointer'
-        onClick={handleClick}
+        className='relative w-full '
+        ref={ref}
       >
-        <SUInput
-          className={className}
-          id={id}
-          value={selectedOption}
-          {...rest}
-        />
-        <span className={`absolute right-[1px] bottom-[1px] z-10 ${className}`}>
-          <img
-            src={downArrowIcon}
-            alt='Dropdown Arrow'
-            className='w-5 h-5'
-          />
-        </span>
-      </div>
+        <div className='h-[17px] text-[14px] leading-[17px] font-semibold mb-1'>{label}</div>
 
-      {selectOpen === id && (
-        <ul className='absolute top-full left-0 w-full border rounded bg-white z-20 max-h-60 overflow-y-auto'>
-          {options
-            .filter(option => (typeof value === 'string' ? option.includes(value) : false))
-            .map(option => (
-              <li
-                key={option}
-                className='text-base/[20px] px-4 py-2 cursor-pointer hover:bg-gray-200'
-                onClick={() => handleOptionClick(option)}
-              >
-                {option}
-              </li>
-            ))}
-        </ul>
-      )}
-    </div>
-  );
-}
+        <Select
+          value={selectedOption} // 선택된 옵션을 react-select의 value로 설정
+          onChange={handleChange} // 새로운 onChange 핸들러
+          options={options} // 옵션 데이터를 react-select에 전달
+          placeholder={placeholder}
+          className={className} // Tailwind CSS 클래스 적용
+          isClearable // 기본 클리어 버튼 활성화
+        />
+      </div>
+    );
+  }
+);
 
 export default SUSelect;
