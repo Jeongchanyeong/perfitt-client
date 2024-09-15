@@ -23,23 +23,35 @@ function SUInfo() {
     },
   });
 
-  const { handleSubmit, control } = methods;
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = methods;
 
   const onSubmit = (data: FormValues) => {
     console.log(data);
-    // 여기에 제출 후 처리 로직 추가
-    setState('end'); // 제출 후 상태를 'end'로 변경
+    // 제출 후 상태를 'end'로 변경
+    setState('end');
   };
 
   const yearList = Array.from({ length: 70 }, (_, i) => ({ key: i, value: `${i + 1955}년` }));
   const monthList = Array.from({ length: 12 }, (_, i) => ({ key: i, value: `${i + 1}월` }));
   const dayList = Array.from({ length: 31 }, (_, i) => ({ key: i, value: `${i + 1}일` }));
 
+  const handleNextClick = () => {
+    if (state === 'start') {
+      handleSubmit(data => setState('end'))(); // 상태를 'end'로 변경하기 전에 유효성 검사 수행
+    } else {
+      handleSubmit(onSubmit)(); // 최종 폼 제출
+    }
+  };
+
   return (
     <FormProvider {...methods}>
       <div className='rounded-t-lg'>
         {state === 'start' ? (
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Header title='회원가입' />
             <div className='flex flex-col gap-4 mb-10'>
               <Controller
@@ -170,17 +182,7 @@ function SUInfo() {
           <SUIdetails />
         )}
       </div>
-      <Button
-        onClick={() => {
-          if (state === 'start') {
-            setState('end'); // 상태를 'end'로 변경
-          } else {
-            handleSubmit(onSubmit)(); // 최종 폼 제출
-          }
-        }}
-      >
-        {state === 'start' ? '다음' : '가입완료'}
-      </Button>
+      <Button onClick={handleNextClick}>{state === 'start' ? '다음' : '가입완료'}</Button>
     </FormProvider>
   );
 }

@@ -1,6 +1,5 @@
 import React, { forwardRef } from 'react';
 import Select, { ActionMeta, SingleValue } from 'react-select';
-import { Placeholder } from 'react-select/animated';
 
 // Option 타입 정의
 type Option = {
