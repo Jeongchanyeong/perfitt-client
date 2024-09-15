@@ -23,14 +23,10 @@ function SUInfo() {
     },
   });
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = methods;
+  const { handleSubmit, control } = methods;
 
   const onSubmit = (data: FormValues) => {
-    console.log(data);
+    console.log('최종 data:', data);
     // 제출 후 상태를 'end'로 변경
     setState('end');
   };
@@ -41,7 +37,15 @@ function SUInfo() {
 
   const handleNextClick = () => {
     if (state === 'start') {
-      handleSubmit(data => setState('end'))(); // 상태를 'end'로 변경하기 전에 유효성 검사 수행
+      handleSubmit(
+        data => {
+          console.log(data); // data를 사용할 수 있음
+          setState('end'); // 상태를 'end'로 변경
+        },
+        errors => {
+          console.log(errors); // 유효성 검사 오류를 처리
+        }
+      )();
     } else {
       handleSubmit(onSubmit)(); // 최종 폼 제출
     }
@@ -116,8 +120,9 @@ function SUInfo() {
               <Controller
                 name='gender'
                 control={control}
+                rules={{ required: { value: true, message: '성별을 선택해 주세요' } }}
                 defaultValue='' // 기본 값 설정
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <SUSelect
                     label='성별'
                     optionData={[
@@ -128,22 +133,26 @@ function SUInfo() {
                     value={field.value}
                     onChange={field.onChange}
                     placeholder='성별을 선택해 주세요'
+                    helperText={fieldState.error?.message || ''}
                   />
                 )}
               />
-              <div className='flex gap-1 '>
+
+              <div className='flex flex-row gap-1 '>
                 <Controller
                   name='year'
                   control={control}
-                  defaultValue='' // 기본 값 설정
-                  render={({ field }) => (
+                  defaultValue=''
+                  rules={{ required: { value: true, message: '연도를 선택해 주세요' } }}
+                  render={({ field, fieldState }) => (
                     <SUSelect
                       label='생년월일'
                       optionData={yearList}
                       className='rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                       placeholder='년'
-                      value={field.value} // field value 사용
-                      onChange={field.onChange} // field.onChange 사용
+                      value={field.value}
+                      onChange={field.onChange}
+                      helperText={fieldState.error?.message || ''}
                     />
                   )}
                 />
@@ -151,13 +160,15 @@ function SUInfo() {
                   name='month'
                   control={control}
                   defaultValue=''
-                  render={({ field }) => (
+                  rules={{ required: { value: true, message: '월을 선택해 주세요' } }}
+                  render={({ field, fieldState }) => (
                     <SUSelect
                       optionData={monthList}
                       className=' rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                       value={field.value}
                       onChange={field.onChange}
                       placeholder='월'
+                      helperText={fieldState.error?.message || ''}
                     />
                   )}
                 />
@@ -165,13 +176,15 @@ function SUInfo() {
                   name='day'
                   control={control}
                   defaultValue=''
-                  render={({ field }) => (
+                  rules={{ required: { value: true, message: '일을 선택해 주세요' } }}
+                  render={({ field, fieldState }) => (
                     <SUSelect
                       optionData={dayList}
                       className='rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                       value={field.value}
                       onChange={field.onChange}
                       placeholder='일'
+                      helperText={fieldState.error?.message || ''}
                     />
                   )}
                 />

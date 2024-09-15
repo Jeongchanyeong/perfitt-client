@@ -17,7 +17,7 @@ const SUInput = forwardRef<HTMLInputElement, TSUInputProps>((props, ref) => {
         className={twMerge(
           `w-full border border-[#E4E4E7] rounded
             text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]`,
-          isError ? 'border-red-500' : '', // 오류 시 스타일 변경
+          isError ? 'border-red-500' : '',
           className
         )}
         ref={ref}

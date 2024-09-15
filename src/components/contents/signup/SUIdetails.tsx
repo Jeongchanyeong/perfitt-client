@@ -3,7 +3,7 @@ import SUSelect from './SUSelect';
 import SUIbtn from './SUIbtn';
 import infoicon from '../../../assets/images/icon_info_blue400.png';
 import { Controller, useFormContext } from 'react-hook-form';
-import { FormValues } from '../../../types/sign'; // FormValues 타입 가져오기
+import { FormValues } from '../../../types/sign';
 
 const SUIdetails = () => {
   const [selectedSizeType, setSelectedSizeType] = useState<string>('');
@@ -100,13 +100,15 @@ const SUIdetails = () => {
           <Controller
             name='usersize'
             control={control}
-            render={({ field }) => (
+            rules={{ required: { value: true, message: '사이즈를 선택해 주세요' } }}
+            render={({ field, fieldState }) => (
               <SUSelect
                 label='평소 신는 스니커즈 사이즈'
                 optionData={sizeOptions.map(option => ({ key: option, value: option }))}
                 className='w-full border border-[#E4E4E7] rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                 placeholder='사이즈를 선택해 주세요'
                 {...field}
+                helperText={fieldState.error?.message || ''}
               />
             )}
           />
