@@ -25,7 +25,7 @@ const customStyles: StylesConfig<OptionType, false, GroupBase<OptionType>> = {
     borderColor: state.isFocused ? '#4A90E2' : '#E4E4E7',
     boxShadow: state.isFocused ? '0 0 0 1px #4A90E2' : 'none',
     height: '3rem',
-    paddingLeft: '0.5rem',
+    paddingLeft: '0.4rem',
   }),
   placeholder: provided => ({
     ...provided,
