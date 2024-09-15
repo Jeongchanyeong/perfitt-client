@@ -19,7 +19,7 @@ function SUInfo() {
       year: '',
       month: '',
       day: '',
-      usersize: '', // 초기 값을 빈 문자열로 설정
+      usersize: '',
     },
   });
 
@@ -173,9 +173,9 @@ function SUInfo() {
       <Button
         onClick={() => {
           if (state === 'start') {
-            handleSubmit(onSubmit)(); // 폼 제출
+            setState('end'); // 상태를 'end'로 변경
           } else {
-            setState('start');
+            handleSubmit(onSubmit)(); // 최종 폼 제출
           }
         }}
       >

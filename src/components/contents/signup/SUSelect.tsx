@@ -23,7 +23,7 @@ const SUSelect = forwardRef<HTMLDivElement, TSelectProps>(
   ({ optionData, className, value, onChange, placeholder, label }, ref) => {
     // react-select에서 사용하는 형식으로 optionData 변환
     const options = optionData.map(option => ({
-      value: option.key,
+      value: option.value,
       label: option.value,
     }));
 
@@ -51,11 +51,11 @@ const SUSelect = forwardRef<HTMLDivElement, TSelectProps>(
 
         <Select
           value={selectedOption} // 선택된 옵션을 react-select의 value로 설정
-          onChange={handleChange} // 새로운 onChange 핸들러
-          options={options} // 옵션 데이터를 react-select에 전달
+          onChange={handleChange}
+          options={options}
           placeholder={placeholder}
-          className={className} // Tailwind CSS 클래스 적용
-          isClearable // 기본 클리어 버튼 활성화
+          className={className}
+          isClearable
         />
       </div>
     );
