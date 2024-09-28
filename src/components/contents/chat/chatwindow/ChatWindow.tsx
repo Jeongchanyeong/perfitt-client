@@ -20,7 +20,10 @@ const ChatWindow = ({ chatMessage }: IChat) => {
         {chatMessage?.map((item: IMessage) => (
           <li key={item.id}>
             {item.target === 'user' ? (
-              <MyMessage text={item.message} />
+              <MyMessage
+                text={item.message}
+                image={item.image}
+              />
             ) : (
               <AIContainer
                 message={item.message}

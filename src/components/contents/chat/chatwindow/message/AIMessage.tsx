@@ -1,6 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import { perfittCircleLogo } from '../../../../../assets/images/images';
 import { IText } from '../../../../../types/chat';
+import { emphasize } from '../../../../../config/markdown';
 
 const AIMessage = ({ text }: IText) => {
   return (
@@ -12,7 +13,7 @@ const AIMessage = ({ text }: IText) => {
         />
       </div>
       <div className='max-w-[90%] px-2.5 py-[5px] text-sm/[22px] break-words'>
-        <ReactMarkdown>{text}</ReactMarkdown>
+        <ReactMarkdown components={emphasize}>{text}</ReactMarkdown>
       </div>
     </div>
   );

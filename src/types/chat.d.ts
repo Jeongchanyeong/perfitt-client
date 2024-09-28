@@ -1,9 +1,10 @@
 export interface IMessage {
   id: number;
-  message: string;
   target: 'user' | 'AI';
   products?: IProductItem[];
   brands?: IBrandCard[];
+  message: string;
+  image?: string;
 }
 
 export interface IChat {
@@ -14,11 +15,12 @@ export interface IChat {
 }
 
 export interface IChatInput {
-  handleMessage: (text: string) => void;
+  handleMessage: (data: IText) => void;
 }
 
 export interface IText {
   text: string;
+  image?: string;
 }
 export interface IBrandCard {
   brand: string;

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { IMessage } from '../types/chat';
+import { IMessage, IText } from '../types/chat';
 import { useChatResponseMutation } from '../hooks/useChatMutation';
 import ChatWindow from '../components/contents/chat/chatwindow/ChatWindow';
 import ChatInput from '../components/contents/chat/ChatInput';
@@ -62,37 +62,52 @@ const Chat = () => {
   }, [id]);
 
   // 메시지 처리 함수
-  const handleMessage = async (text: string) => {
+  const handleMessage = async ({ text, image }: IText) => {
     const newMessage: IMessage = {
       id: idRef.current++,
       message: text || '',
       target: 'user',
     };
+
+    if (image) {
+      newMessage.image = image;
+    }
+
     // 사용자 메시지 추가
     setChatMessage(message => [...message, newMessage]);
     // firestore에 사용자 메시지 저장
     await saveMessage(newMessage);
 
     // 성공 시 API 데이터 뿌려주기
-    AIResponse(text, {
-      onSuccess: async item => {
-        const newAIMessage: IMessage = {
-          id: idRef.current++,
-          target: 'AI',
-          message: item.message || '',
-          products: item.products || [],
-          brands: item.brands || [],
-        };
+    // 사용자가 뿌리는 데이터: text, image
+    if (text || image) {
+      AIResponse(
+        { text, image },
+        {
+          onSuccess: async item => {
+            const newAIMessage: IMessage = {
+              id: idRef.current++,
+              target: 'AI',
+              message: item.message || '',
+              products: item.products || [],
+              brands: item.brands || [],
+            };
 
-        // AI 메시지 배열에 추가
-        setChatMessage(AIMessage => [...AIMessage, newAIMessage]);
-        // firestore에 AI 메시지 저장
-        await saveMessage(newAIMessage);
-      },
-      onError: error => {
-        console.error('err', error);
-      },
-    });
+            // AI 메시지 배열에 추가
+            setChatMessage(AIMessage => [...AIMessage, newAIMessage]);
+            // firestore에 AI 메시지 저장
+            await saveMessage(newAIMessage);
+          },
+          onError: error => {
+            console.error('err', error);
+          },
+        }
+      );
+    }
+  };
+
+  const handleKeywordSelect = (keyword: string) => {
+    handleMessage({ text: keyword });
   };
 
   return (
@@ -102,7 +117,7 @@ const Chat = () => {
         <div className='h-14'></div>
         <ChatWindow chatMessage={chatMessage} />
       </div>
-      {userInfo ? <SignInAutoKeyword /> : null}
+      {userInfo ? <SignInAutoKeyword onKeywordSelect={handleKeywordSelect} /> : null}
       <ChatInput handleMessage={handleMessage} />
     </div>
   );
