@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SMChatList from './SMChatList';
+import { TUser } from '../../../types/db';
 import { IChat } from '../../../types/chat';
 import menuIcon from '../../../assets/icons/menu-icon.svg';
 import plusIcon from '../../../assets/icons/plus-mini-icon.svg';
 import userIcon from '../../../assets/icons/user-border-icon.svg';
+import { auth } from '../../../service/firebase';
 import { createNewChat } from '../../../service/CreateNewChat';
 import Logout from '../signin/Logout';
 import { AuthContext } from '../../../service/AuthContext';
@@ -16,7 +18,7 @@ type TSideMenuProps = {
   toggleMenu: () => void;
 };
 
-const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
+const SideMenu = ({ isMenuOpen, toggleMenu }: TSideMenuProps) => {
   const navigate = useNavigate();
   const [chatData, setChatData] = useState<IChat[]>([]);
   const userdata = useContext(AuthContext);
@@ -62,9 +64,17 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
     toggleMenu();
   };
 
+  const logout = () => {
+    auth.signOut();
+    handleCreateChat();
+  };
+
   return (
     <>
-      <UserLoader uid={uid} />
+      <div
+        className={`absolute inset-0 transition-opacity duration-300 z-10
+          ${isMenuOpen ? 'bg-gray-600 opacity-50' : 'opacity-0 pointer-events-none'}`}
+      />
       <nav
         className={`absolute top-0 left-0 w-[280px] h-full p-4 flex flex-col z-50 rounded-r-lg bg-white
         transform transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
@@ -96,7 +106,7 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
 
         {/* 채팅 리스트 */}
         <div className='flex-1 overflow-scroll scrollbar-hide'>
-          {chatData.length > 0 && (
+          {chatData !== undefined && chatData.length > 0 && (
             <SMChatList
               date={'오늘'}
               chatlist={chatData}
@@ -109,7 +119,7 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
         <div className='flex flex-col py-[9px] border-y-[1px] border-[#E4E4E7] text-[16px] leading-6'>
           <button
             className='py-[7px] text-left hover:text-[#A1A1AA]'
-            onClick={() => handleLink('/mypage/item/like')}
+            onClick={() => handleLink('/mypage/item')}
           >
             좋아요 | 최근 본
           </button>
@@ -127,45 +137,42 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
           </button>
         </div>
 
+        {/* 로그인/회원가입 OR 마이페이지/로그아웃 */}
+        {/* <div className='h-[62px] flex items-center text-[16px] leading-5 font-medium'>
+        <button
+          className='hover:text-[#A1A1AA]'
+          onClick={() => handleLink('/chat/sign')}
+        >
+          로그인
+        </button>
+        <span className='mx-1.5'>/</span>
+        <button
+          className='hover:text-[#A1A1AA]'
+          onClick={() => handleLink('/chat/sign')}
+        >
+          회원가입
+        </button>
+      </div> */}
         <div className='flex justify-between items-center h-[62px]'>
-          {userdata ? (
-            <>
-              <button
-                className='flex items-center gap-2 pr-5'
-                onClick={() => handleLink('/mypage')}
-              >
-                <div className='w-[30px] h-[30px] rounded-full overflow-hidden'>
-                  <img
-                    src={user?.profile ? user.profile : userIcon}
-                    alt={`${user?.name} Profile`}
-                    className='w-full h-full object-cover'
-                  />
-                </div>
-                <div className='max-w-[150px] text-[16px] leading-5 font-semibold truncate text-left'>{user?.name}</div>
-              </button>
-              <Logout />
-            </>
-          ) : (
-            <div className='flex items-center gap-2 pr-5'>
-              <button
-                className='hover:text-[#A1A1AA]'
-                onClick={() => {
-                  console.log('로그인 버튼 클릭됨');
-                }}
-              >
-                로그인
-              </button>
-              <span className='mx-1.5'>/</span>
-              <button
-                className='hover:text-[#A1A1AA]'
-                onClick={() => {
-                  console.log('회원가입 버튼 클릭됨');
-                }}
-              >
-                회원가입
-              </button>
+          <button
+            className='flex items-center gap-2 pr-5'
+            onClick={() => handleLink('/mypage')}
+          >
+            <div className='w-[30px] h-[30px] rounded-full overflow-hidden'>
+              <img
+                src={user?.profile ? user.profile : userIcon}
+                alt={`${user?.name} Profile`}
+                className='w-full h-full object-cover'
+              />
             </div>
-          )}
+            <div className='max-w-[150px] text-[16px] leading-5 font-semibold truncate text-left'>{user?.name}</div>
+          </button>
+          <button
+            className='text-[14px] text-[#AAAAAA] underline hover:text-[#F87171]'
+            onClick={logout}
+          >
+            로그아웃
+          </button>
         </div>
       </nav>
     </>

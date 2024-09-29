@@ -49,20 +49,25 @@ const router = createBrowserRouter([
         element: <MyFootInfo />,
       },
       {
-        path: '/shoe-rack/main',
-        element: <ShoeRack />,
-      },
-      {
-        path: '/shoe-rack/review/:mode',
-        element: <ShoesReviewEdit />,
-      },
-      {
-        path: '/shoe-rack/review',
-        element: <ShoesReviewDetail />,
-      },
-      {
-        path: '/shoe-rack/search',
-        element: <ShoesSearch />,
+        path: '/shoe-rack',
+        children: [
+          {
+            path: 'main',
+            element: <ShoeRack />,
+          },
+          {
+            path: 'review/:mode',
+            element: <ShoesReviewEdit />,
+          },
+          {
+            path: 'review',
+            element: <ShoesReviewDetail />,
+          },
+          {
+            path: 'search',
+            element: <ShoesSearch />,
+          },
+        ],
       },
       {
         path: '*',

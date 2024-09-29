@@ -26,10 +26,6 @@ function ChatHeader() {
           />
         </button>
       </header>
-      <div
-        className={`absolute inset-0 transition-opacity duration-300 z-10
-          ${isMenuOpen ? 'bg-gray-600 opacity-50' : 'opacity-0 pointer-events-none'}`}
-      />
       <SideMenu
         isMenuOpen={isMenuOpen}
         toggleMenu={toggleMenu}

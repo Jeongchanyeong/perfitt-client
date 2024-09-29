@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import { shoeSearch } from '../../../assets/images/images';
 import Button from '../../common/Button';
 
 function SREmpty() {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className='flex-1 my-6'>
@@ -24,7 +27,7 @@ function SREmpty() {
           </div>
         </div>
       </div>
-      <Button>신발 등록하기</Button>
+      <Button onClick={() => navigate('/shoe-rack/review/add')}>신발 등록하기</Button>
     </>
   );
 }
