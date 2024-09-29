@@ -26,7 +26,7 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
   useEffect(() => {
     const loadData = async () => {
       if (!uid) {
-        navigate('/login'); // 로그인하지 않은 경우 이동
+        navigate('/chat/signin'); // 로그인하지 않은 경우 이동
       } else {
         // await fetchChatData(); // 밑에 코드 수정후 활성화
       }

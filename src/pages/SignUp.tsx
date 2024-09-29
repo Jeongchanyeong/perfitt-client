@@ -49,7 +49,7 @@ const SignUp = () => {
       });
 
       alert('회원가입 성공');
-      navigate('/signin');
+      navigate('chat/signin');
     } catch (e) {
       if (e instanceof Error) {
         console.error('회원가입 실패:', e);

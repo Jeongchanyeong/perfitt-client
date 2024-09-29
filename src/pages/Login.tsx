@@ -21,7 +21,7 @@ const Login = () => {
       const user = userCredential.user;
       console.log('로그인 성공:', user);
       setErrorMessage(''); // 성공 시 에러 메시지 초기화
-      navigate('/signin');
+      navigate('chat/signin');
     } catch (e: any) {
       console.error('로그인 실패:', e.message);
       handleErrorMessage(e.code);
