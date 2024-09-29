@@ -13,7 +13,6 @@ import MyPage from '../pages/MyPage';
 import SignUp from '../pages/SignUp';
 import SignIn from '../pages/SignIn';
 import Login from '../pages/Login';
-import AuthProvider from '../service/AuthProvider';
 import Item from '../pages/Item';
 import Bridge from '../pages/Bridge';
 
@@ -27,15 +26,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/signin',
-        element: (
-          <AuthProvider>
-            <SignIn />
-          </AuthProvider>
-        ),
-      },
-      {
-        path: '/signup',
-        element: <SignUp />,
+        element: <SignIn />,
       },
       {
         path: '/onboarding',

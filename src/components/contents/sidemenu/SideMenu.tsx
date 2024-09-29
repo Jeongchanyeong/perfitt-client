@@ -1,14 +1,4 @@
-// 사이드 메뉴
-
-// 리스트 날짜별 분류
-// 데이터 가져올 때 지난 7일까지만 가져오기
-// user id 값 읽어서 name, profile 가져오기
-// 로그안 안되어있을 때 로그인 페이지 link
-// 채팅 리스트 드래그 / 공유하기, 삭제하기
-// 로그아웃
-// 로그인/회원가입 링크 변경
-
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SMChatList from './SMChatList';
 import { IChat } from '../../../types/chat';
@@ -17,6 +7,9 @@ import plusIcon from '../../../assets/icons/plus-mini-icon.svg';
 import userIcon from '../../../assets/icons/user-border-icon.svg';
 import { createNewChat } from '../../../service/CreateNewChat';
 import Logout from '../signin/Logout';
+import { AuthContext } from '../../../service/AuthContext';
+import { db } from '../../../service/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 type TSideMenuProps = {
   isMenuOpen: boolean;
@@ -25,46 +18,63 @@ type TSideMenuProps = {
 
 const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
   const navigate = useNavigate();
-  const [chatData, setChatData] = useState<IChat[]>();
-  const [user, setUser] = useState<TUser>();
+  const [chatData, setChatData] = useState<IChat[]>([]);
+  const [user, setUser] = useState<TUser | null>(null);
+  const userdata = useContext(AuthContext);
+  const uid = userdata?.uid;
 
   useEffect(() => {
-    setChatData([
-      {
-        id: '00',
-        title: '최근 가장 인기있는 여성 운동화',
-        date: '2024-09-10',
-      },
-      {
-        id: '01',
-        title: '비 오는 날 신기 좋은 레인부츠 추천',
-        date: '2024-09-19',
-      },
-      {
-        id: '02',
-        title: '여름 슬리퍼 추천',
-        date: '2024-09-19',
-      },
-      {
-        id: '03',
-        title: '가벼운 러닝화',
-        date: '2024-09-18',
-      },
-      {
-        id: '04',
-        title: '20대 여성이 많이 찾는 브랜드',
-        date: '2024-09-18',
-      },
-    ]);
-    setUser({
-      name: '김펄핏',
-    });
-  }, []);
+    const loadData = async () => {
+      if (!uid) {
+        navigate('/login'); // 로그인하지 않은 경우 이동
+      } else {
+        await fetchUser();
+        // await fetchChatData(); // 밑에 코드 수정후 활성화
+      }
+    };
+
+    loadData(); // 데이터 로드 함수 호출
+  }, [uid]);
+
+  const fetchUser = async () => {
+    if (uid) {
+      const userRef = doc(db, 'user', uid);
+      const snapshot = await getDoc(userRef);
+
+      if (snapshot.exists()) {
+        // 문서가 존재하는지 확인
+        const userInfo = snapshot.data();
+
+        setUser({
+          name: userInfo.name,
+          profile: userInfo.profile,
+        });
+      } else {
+        console.warn('User not found.');
+      }
+    }
+  };
+  // //채팅데이터 불러오는 코드
+  // const fetchChatData = async () => {
+  //   const today = new Date();
+  //   const lastWeek = new Date(today);
+  //   lastWeek.setDate(today.getDate() - 7); // 7일 전 날짜
+
+  //   const chatQuery = query(collection(db, 'chat'), where('createdAt', '>=', lastWeek), orderBy('createdAt', 'desc'));
+  //   const snapshot = await getDocs(chatQuery);
+  //   const chats = snapshot.docs.map(doc => ({
+  //     id: doc.id,
+  //     ...doc.data(),
+  //   }));
+
+  //   setChatData(chats);
+  // };
 
   const handleLink = (link: string) => {
     toggleMenu();
     navigate(`${link}`);
   };
+
   const handleCreateChat = async () => {
     const newRoom = await createNewChat();
     navigate(`/chat/${newRoom}`);
@@ -103,7 +113,7 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
 
       {/* 채팅 리스트 */}
       <div className='flex-1 overflow-scroll scrollbar-hide'>
-        {chatData !== undefined && chatData.length > 0 && (
+        {chatData.length > 0 && (
           <SMChatList
             date={'오늘'}
             chatlist={chatData}
@@ -134,37 +144,45 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
         </button>
       </div>
 
-      {/* 로그인/회원가입 OR 마이페이지/로그아웃 */}
-      {/* <div className='h-[62px] flex items-center text-[16px] leading-5 font-medium'>
-        <button
-          className='hover:text-[#A1A1AA]'
-          onClick={() => handleLink('/chat/sign')}
-        >
-          로그인
-        </button>
-        <span className='mx-1.5'>/</span>
-        <button
-          className='hover:text-[#A1A1AA]'
-          onClick={() => handleLink('/chat/sign')}
-        >
-          회원가입
-        </button>
-      </div> */}
       <div className='flex justify-between items-center h-[62px]'>
-        <button
-          className='flex items-center gap-2 pr-5'
-          onClick={() => handleLink('/mypage')}
-        >
-          <div className='w-[30px] h-[30px] rounded-full overflow-hidden'>
-            <img
-              src={user?.profile ? user.profile : userIcon}
-              alt={`${user?.name} Profile`}
-              className='w-full h-full object-cover'
-            />
+        {userdata ? (
+          <>
+            <button
+              className='flex items-center gap-2 pr-5'
+              onClick={() => handleLink('/mypage')}
+            >
+              <div className='w-[30px] h-[30px] rounded-full overflow-hidden'>
+                <img
+                  src={user?.profile ? user.profile : userIcon}
+                  alt={`${user?.name} Profile`}
+                  className='w-full h-full object-cover'
+                />
+              </div>
+              <div className='max-w-[150px] text-[16px] leading-5 font-semibold truncate text-left'>{user?.name}</div>
+            </button>
+            <Logout />
+          </>
+        ) : (
+          <div className='flex items-center gap-2 pr-5'>
+            <button
+              className='hover:text-[#A1A1AA]'
+              onClick={() => {
+                console.log('로그인 버튼 클릭됨');
+              }}
+            >
+              로그인
+            </button>
+            <span className='mx-1.5'>/</span>
+            <button
+              className='hover:text-[#A1A1AA]'
+              onClick={() => {
+                console.log('회원가입 버튼 클릭됨');
+              }}
+            >
+              회원가입
+            </button>
           </div>
-          <div className='max-w-[150px] text-[16px] leading-5 font-semibold truncate text-left'>{user?.name}</div>
-        </button>
-        <Logout />
+        )}
       </div>
     </nav>
   );
