@@ -36,3 +36,6 @@ export type TSideBarProps = {
   isBarOpen: boolean;
   toggleBar: () => void;
 };
+export type TuserProfileProps = {
+  user: TUser | null; // user가 null일 수도 있음
+};
