@@ -1,8 +1,21 @@
+import { useNavigate } from 'react-router-dom';
 import arrow from '../../../assets/images/mypage-arrow.svg';
+import { TuserProfileProps } from '../../../types/sign';
+import { useState } from 'react';
+import UpdatePassword from './UpdatePassword';
+import ModalBar from '../../common/ModalBar';
 
-const MyPageBottom = () => {
+const MyPageBottom = (user: TuserProfileProps) => {
+  const navicate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const toggleOpenBar = () => {
+    setIsModalOpen(!isModalOpen); // ModalBar 상태 토글
+    console.log('ModalBar 닫기/열기 함수 호출');
+  };
   const editUserInfo = () => {};
-  const editPassword = () => {};
+  const editPassword = () => {
+    setIsModalOpen(true); // ModalBar 열림
+  };
   const goToCenterLink = () => {};
 
   return (
@@ -18,9 +31,18 @@ const MyPageBottom = () => {
             />
           </button>
         </div>
-        <div className='flex flex-row justify-between  py-[16px] border-b-[1px] border-[#E4E4E7] mx-[-16px] pl-[16px]'>
+        <div className=' flex flex-row justify-between  py-[16px] border-b-[1px] border-[#E4E4E7] mx-[-16px] pl-[16px]'>
           <div>비밀번호 변경</div>
           <button onClick={editPassword}>
+            {isModalOpen && (
+              <ModalBar
+                isBarOpen={isModalOpen}
+                toggleOpenBar={toggleOpenBar}
+              >
+                <UpdatePassword />
+              </ModalBar>
+            )}
+
             <img
               src={arrow}
               alt=''

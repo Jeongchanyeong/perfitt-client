@@ -25,6 +25,7 @@ export type FormValues = {
   month: string;
   day: string;
   size: string;
+  new_password: string;
 };
 
 // select Option 타입 정의
