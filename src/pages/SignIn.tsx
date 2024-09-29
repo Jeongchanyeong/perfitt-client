@@ -2,15 +2,18 @@ import { useContext } from 'react';
 import { AuthContext } from '../service/AuthContext';
 import SignInSocialBtn from '../components/contents/signin/SignInSocialBtn';
 import SignInAuthList from '../components/contents/signin/SignInAuthList';
-import SignInAutoKeyword from '../components/contents/signin/SignInAutoKeyword';
 import { perfittCircleLogo } from '../assets/images/images';
+import UserLoader from '../stores/UserLoder';
+import { useUserStore } from '../stores/UserState';
 
 const SignIn = () => {
   const userInfo = useContext(AuthContext);
-  console.log('userInfo: ', userInfo);
+  const uid = userInfo?.uid;
+  const user = useUserStore(state => state.user);
   // chatwindow 컴포넌트와 header 컴포넌트 부분
   return (
     <>
+      <UserLoader uid={uid} />
       {userInfo ? (
         <div className='flex mt-[25px]'>
           <div className='w-7 h-7'>
@@ -21,7 +24,7 @@ const SignIn = () => {
           </div>
           <div className='ml-2'>
             <p className='px-2.5 py-[5px] text-sm/[22px] break-words'>
-              반갑습니다 {userInfo.displayName == null ? userInfo.email?.split('@')[0] : userInfo.displayName}
+              반갑습니다 {userInfo.displayName == null ? user?.name : userInfo.displayName}
               님!
               <br />
               님을 위한 맞춤 상품을 추천해 드릴께요
