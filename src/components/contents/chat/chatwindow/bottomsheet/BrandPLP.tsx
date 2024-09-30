@@ -1,5 +1,3 @@
-import { fetchChatResponseApi } from '../../../../../api/chat/FetchChatResponseApi';
-
 const BrandPLP = () => {
   return (
     <div className='flex flex-col mt-[54px] w-full px-4'>

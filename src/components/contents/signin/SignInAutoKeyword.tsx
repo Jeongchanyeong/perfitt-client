@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { getRecomendAPi } from '../../../api/signin/getRecommendApi'; // 파일 경로를 적절히 조정
 
-const SignInAutoKeyword = () => {
+interface ISignInAutoKeyword {
+  onKeywordSelect: (keyword: string) => void;
+}
+
+const SignInAutoKeyword = ({ onKeywordSelect }: ISignInAutoKeyword) => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [apiKeyWords, setApiKeyWords] = useState<string[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +57,7 @@ const SignInAutoKeyword = () => {
   };
 
   const onClickKeyWord = (keyword: string) => {
-    console.log(`키워드 클릭됨: ${keyword}`);
+    onKeywordSelect(keyword);
   };
 
   return (
@@ -61,7 +65,7 @@ const SignInAutoKeyword = () => {
       {error && <div className='error-message'>{error}</div>}
       <div
         ref={scrollContainerRef}
-        className='flex gap-2 py-[10px] overflow-x-auto scrollbar-hide'
+        className='cursor-pointer flex gap-2 py-[10px] overflow-x-auto scrollbar-hide'
       >
         {apiKeyWords ? (
           apiKeyWords.map((keyword, index) => (

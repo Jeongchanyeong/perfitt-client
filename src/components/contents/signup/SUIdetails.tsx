@@ -4,7 +4,6 @@ import SUIbtn from './SUIbtn';
 import infoicon from '../../../assets/images/icon_info_blue400.png';
 import { Controller, useFormContext } from 'react-hook-form';
 import { FormValues } from '../../../types/sign';
-
 const SUIdetails = () => {
   const [selectedSizeType, setSelectedSizeType] = useState<string>('');
   const { control, setValue, getValues } = useFormContext<FormValues>();
@@ -12,26 +11,17 @@ const SUIdetails = () => {
   const userSizeType = [
     {
       type: 'mm',
-      size: {
-        female: [220, 270],
-        male: [250, 310],
-      },
+      size: [220, 310],
       gap: 5,
     },
     {
       type: 'EU',
-      size: {
-        female: [35.5, 40.5],
-        male: [40, 46],
-      },
+      size: [35.5, 46],
       gap: 0.5,
     },
     {
       type: 'US',
-      size: {
-        female: [5, 10],
-        male: [7, 13],
-      },
+      size: [5, 13],
       gap: 0.5,
     },
   ];
@@ -40,20 +30,15 @@ const SUIdetails = () => {
     const sizeTypeData = userSizeType.find(type => type.type === sizeType);
     if (!sizeTypeData) return [];
 
-    const { female, male } = sizeTypeData.size;
-    const { gap } = sizeTypeData;
+    const { size, gap } = sizeTypeData;
 
-    const femaleSize = Array.from({ length: Math.floor((female[1] - female[0]) / gap) + 1 }, (_, i) => {
-      const size = female[0] + i * gap;
-      return sizeType === 'mm' ? `${size} mm / 여성` : `${sizeType} ${size} / 여성`;
+    // 각 사이즈 타입 앞에 사이즈 타입 문자열을 추가함
+    const sizeOptions = Array.from({ length: Math.floor((size[1] - size[0]) / gap) + 1 }, (_, i) => {
+      const currentSize = size[0] + i * gap;
+      return sizeType === 'mm' ? `${currentSize}mm` : `${sizeType} ${currentSize}`;
     });
 
-    const maleSize = Array.from({ length: Math.floor((male[1] - male[0]) / gap) + 1 }, (_, i) => {
-      const size = male[0] + i * gap;
-      return sizeType === 'mm' ? `${size} mm / 남성` : `${sizeType} ${size} / 남성`;
-    });
-
-    return femaleSize.concat(maleSize);
+    return sizeOptions;
   };
 
   const sizeOptions = useMemo(() => getSizeOptions(selectedSizeType), [selectedSizeType]);
@@ -62,14 +47,15 @@ const SUIdetails = () => {
     setSelectedSizeType(sizeType);
     const newSizeOptions = getSizeOptions(sizeType);
 
-    if (!newSizeOptions.includes(getValues('usersize'))) {
-      setValue('usersize', '');
+    // 선택된 사이즈가 옵션에 없으면 초기화
+    if (!newSizeOptions.includes(getValues('size'))) {
+      setValue('size', '');
     }
   };
 
   return (
     <>
-      <div>
+      <div className='p-4'>
         <label className='h-[17px] text-[14px] leading-[17px] font-semibold'>
           사이즈 타입
           <div className='mb-6 flex flex-row gap-2 w-full'>
@@ -98,7 +84,7 @@ const SUIdetails = () => {
         </label>
         <div className='mb-6'>
           <Controller
-            name='usersize'
+            name='size'
             control={control}
             rules={{ required: { value: true, message: '사이즈를 선택해 주세요' } }}
             render={({ field, fieldState }) => (

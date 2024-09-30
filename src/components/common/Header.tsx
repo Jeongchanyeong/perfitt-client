@@ -1,15 +1,26 @@
+import { useNavigate } from 'react-router-dom';
+import { THeaderProps } from '../../types/header';
 import { leftArrowIcon, verticalMenuIcon } from '../../assets/images/images';
 
-interface IHeader {
-  title?: string;
-  back?: boolean;
-  rightChild?: React.ReactNode;
-  handleLeftBtnClick?: () => void;
-  handleRightBtnClick?: () => void;
-}
+const Header = (props: THeaderProps) => {
+  const { title, back, rightChild, handleRightBtnClick } = props;
 
-const Header = (props: IHeader) => {
-  const { title, back, rightChild, handleLeftBtnClick, handleRightBtnClick } = props;
+  const navigate = useNavigate();
+  const currentPageDomain = window.location.origin;
+  const previousPage = document.referrer;
+
+  const handleBack = () => {
+    if (previousPage) {
+      try {
+        const previousPageDomain = new URL(previousPage).origin;
+        if (currentPageDomain === previousPageDomain) navigate(-1);
+        else navigate('/chat');
+      } catch (error) {
+        console.error(error);
+        navigate('/chat');
+      }
+    } else alert('이전 페이지가 없습니다.');
+  };
 
   return (
     <header
@@ -24,7 +35,7 @@ const Header = (props: IHeader) => {
         {back && (
           <button
             className='w-6 h-6'
-            onClick={handleLeftBtnClick}
+            onClick={handleBack}
           >
             <img
               src={leftArrowIcon}
@@ -35,17 +46,19 @@ const Header = (props: IHeader) => {
         )}
 
         {rightChild && (
-          <button
-            className='w-11 h-11'
-            onClick={handleRightBtnClick}
-          >
-            <img
-              src={verticalMenuIcon}
-              alt='overflow menu button'
-              className='w-full h-full object-cover'
-            />
+          <div className='relative flex justify-center items-center'>
+            <button
+              className='w-11 h-11'
+              onClick={handleRightBtnClick}
+            >
+              <img
+                src={verticalMenuIcon}
+                alt='overflow menu button'
+                className='w-full h-full object-cover'
+              />
+            </button>
             {rightChild}
-          </button>
+          </div>
         )}
       </div>
     </header>

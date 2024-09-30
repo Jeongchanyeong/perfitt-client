@@ -1,6 +1,6 @@
 import { IText } from '../../../../../types/chat';
 
-const MyMessage = ({ text }: IText) => {
+const MyMessage = ({ text, image }: IText) => {
   return (
     <div className='flex justify-end mb-5'>
       <span
@@ -8,6 +8,12 @@ const MyMessage = ({ text }: IText) => {
             text-[14px] leading-[22px] text-white break-words'
       >
         {text}
+        {image && (
+          <img
+            src={image}
+            className='rounded-md'
+          />
+        )}
       </span>
     </div>
   );

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 const SignInSocialBtn = () => {
   const [userData, setUserData] = useState<any>(null);
+
   const navigate = useNavigate();
 
   const handleGoogleLogin = async () => {
@@ -28,7 +29,6 @@ const SignInSocialBtn = () => {
   };
 
   const handleSignUp = () => {
-    navigate('/signup');
     console.log('회원가입 클릭됨');
   };
 

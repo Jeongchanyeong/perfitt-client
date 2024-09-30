@@ -7,7 +7,7 @@ export const customStyles_base: StylesConfig<OptionType, false, GroupBase<Option
     ...provided,
     borderColor: state.isFocused ? '#4A90E2' : '#E4E4E7',
     boxShadow: state.isFocused ? '0 0 0 1px #4A90E2' : 'none',
-    padding: '8px 6px',
+    padding: '7px 6px',
   }),
   placeholder: provided => ({
     ...provided,
@@ -49,6 +49,6 @@ export const customStyles_birth: StylesConfig<OptionType, false, GroupBase<Optio
     ...provided,
     borderColor: state.isFocused ? '#4A90E2' : '#E4E4E7',
     boxShadow: state.isFocused ? '0 0 0 1px #4A90E2' : 'none',
-    padding: '8px 1px',
+    padding: '5px 1px',
   }),
 };

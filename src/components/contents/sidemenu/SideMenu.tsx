@@ -11,10 +11,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SMChatList from './SMChatList';
+import { TUser } from '../../../types/db';
 import { IChat } from '../../../types/chat';
 import menuIcon from '../../../assets/icons/menu-icon.svg';
 import plusIcon from '../../../assets/icons/plus-mini-icon.svg';
 import userIcon from '../../../assets/icons/user-border-icon.svg';
+import { auth } from '../../../service/firebase';
 import { createNewChat } from '../../../service/CreateNewChat';
 
 type TSideMenuProps = {
@@ -22,7 +24,7 @@ type TSideMenuProps = {
   toggleMenu: () => void;
 };
 
-const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
+const SideMenu = ({ isMenuOpen, toggleMenu }: TSideMenuProps) => {
   const navigate = useNavigate();
   const [chatData, setChatData] = useState<IChat[]>();
   const [user, setUser] = useState<TUser>();
@@ -64,78 +66,88 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
     toggleMenu();
     navigate(`${link}`);
   };
+
   const handleCreateChat = async () => {
     const newRoom = await createNewChat();
     navigate(`/chat/${newRoom}`);
     toggleMenu();
   };
 
+  const logout = () => {
+    auth.signOut();
+    handleCreateChat();
+  };
+
   return (
-    <nav
-      className={`absolute top-0 left-0 w-[280px] h-full p-4 flex flex-col z-50 rounded-r-lg bg-white
+    <>
+      <div
+        className={`absolute inset-0 transition-opacity duration-300 z-10
+          ${isMenuOpen ? 'bg-gray-600 opacity-50' : 'opacity-0 pointer-events-none'}`}
+      />
+      <nav
+        className={`absolute top-0 left-0 w-[280px] h-full p-4 flex flex-col z-50 rounded-r-lg bg-white
         transform transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
-    >
-      <button
-        className='w-6 h-6'
-        onClick={toggleMenu}
       >
-        <img
-          src={menuIcon}
-          alt='Close Side Menu'
-          className='w-full h-full object-cover'
-        />
-      </button>
-
-      {/* 새 채팅 */}
-      <button
-        className='flex justify-center items-center w-fit h-[36px] mt-[34px]
-        pl-[7px] pr-2.5 rounded-[99px] bg-[rgb(245,245,245)]'
-        onClick={handleCreateChat}
-      >
-        <img
-          src={plusIcon}
-          alt='New Chat'
-          className='w-[18px] h-[18px]'
-        />
-        <div className='ml-[8px] text-[16px] leading-6 text-[#A1A1AA]'>새 채팅</div>
-      </button>
-
-      {/* 채팅 리스트 */}
-      <div className='flex-1 overflow-scroll scrollbar-hide'>
-        {chatData !== undefined && chatData.length > 0 && (
-          <SMChatList
-            date={'오늘'}
-            chatlist={chatData}
-            // onDelete={handleDeleteChat}
-            // handleLink={handleLink}
+        <button
+          className='w-6 h-6'
+          onClick={toggleMenu}
+        >
+          <img
+            src={menuIcon}
+            alt='Close Side Menu'
+            className='w-full h-full object-cover'
           />
-        )}
-      </div>
+        </button>
 
-      {/* bottom menu */}
-      <div className='flex flex-col py-[9px] border-y-[1px] border-[#E4E4E7] text-[16px] leading-6'>
+        {/* 새 채팅 */}
         <button
-          className='py-[7px] text-left hover:text-[#A1A1AA]'
-          onClick={() => handleLink('/mypage/item')}
+          className='flex justify-center items-center w-fit h-[36px] mt-[34px]
+        pl-[7px] pr-2.5 rounded-[99px] bg-[rgb(245,245,245)]'
+          onClick={handleCreateChat}
         >
-          좋아요 | 최근 본
+          <img
+            src={plusIcon}
+            alt='New Chat'
+            className='w-[18px] h-[18px]'
+          />
+          <div className='ml-[8px] text-[16px] leading-6 text-[#A1A1AA]'>새 채팅</div>
         </button>
-        <button
-          className='py-[7px] text-left hover:text-[#A1A1AA]'
-          onClick={() => handleLink('/shoe-rack/main')}
-        >
-          신발장
-        </button>
-        <button
-          className='py-[7px] text-left hover:text-[#A1A1AA]'
-          onClick={() => handleLink('/mypage/foot')}
-        >
-          내 발 정보
-        </button>
-      </div>
 
-      {/* 로그인/회원가입 OR 마이페이지/로그아웃 */}
-      {/* <div className='h-[62px] flex items-center text-[16px] leading-5 font-medium'>
+        {/* 채팅 리스트 */}
+        <div className='flex-1 overflow-scroll scrollbar-hide'>
+          {chatData !== undefined && chatData.length > 0 && (
+            <SMChatList
+              date={'오늘'}
+              chatlist={chatData}
+              handleLink={handleLink}
+            />
+          )}
+        </div>
+
+        {/* bottom menu */}
+        <div className='flex flex-col py-[9px] border-y-[1px] border-[#E4E4E7] text-[16px] leading-6'>
+          <button
+            className='py-[7px] text-left hover:text-[#A1A1AA]'
+            onClick={() => handleLink('/mypage/item')}
+          >
+            좋아요 | 최근 본
+          </button>
+          <button
+            className='py-[7px] text-left hover:text-[#A1A1AA]'
+            onClick={() => handleLink('/shoe-rack/main')}
+          >
+            신발장
+          </button>
+          <button
+            className='py-[7px] text-left hover:text-[#A1A1AA]'
+            onClick={() => handleLink('/mypage/foot')}
+          >
+            내 발 정보
+          </button>
+        </div>
+
+        {/* 로그인/회원가입 OR 마이페이지/로그아웃 */}
+        {/* <div className='h-[62px] flex items-center text-[16px] leading-5 font-medium'>
         <button
           className='hover:text-[#A1A1AA]'
           onClick={() => handleLink('/chat/sign')}
@@ -150,23 +162,29 @@ const SideMenu = ({ toggleMenu, isMenuOpen }: TSideMenuProps) => {
           회원가입
         </button>
       </div> */}
-      <div className='flex justify-between items-center h-[62px]'>
-        <button
-          className='flex items-center gap-2 pr-5'
-          onClick={() => handleLink('/mypage')}
-        >
-          <div className='w-[30px] h-[30px] rounded-full overflow-hidden'>
-            <img
-              src={user?.profile ? user.profile : userIcon}
-              alt={`${user?.name} Profile`}
-              className='w-full h-full object-cover'
-            />
-          </div>
-          <div className='max-w-[150px] text-[16px] leading-5 font-semibold truncate text-left'>{user?.name}</div>
-        </button>
-        <button className='text-[14px] text-[#AAAAAA] underline hover:text-[#F87171]'>로그아웃</button>
-      </div>
-    </nav>
+        <div className='flex justify-between items-center h-[62px]'>
+          <button
+            className='flex items-center gap-2 pr-5'
+            onClick={() => handleLink('/mypage')}
+          >
+            <div className='w-[30px] h-[30px] rounded-full overflow-hidden'>
+              <img
+                src={user?.profile ? user.profile : userIcon}
+                alt={`${user?.name} Profile`}
+                className='w-full h-full object-cover'
+              />
+            </div>
+            <div className='max-w-[150px] text-[16px] leading-5 font-semibold truncate text-left'>{user?.name}</div>
+          </button>
+          <button
+            className='text-[14px] text-[#AAAAAA] underline hover:text-[#F87171]'
+            onClick={logout}
+          >
+            로그아웃
+          </button>
+        </div>
+      </nav>
+    </>
   );
 };
 

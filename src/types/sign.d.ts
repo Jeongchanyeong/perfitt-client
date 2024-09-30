@@ -20,15 +20,19 @@ export type FormValues = {
   email: string;
   password: string;
   name: string;
-  gender: string | number;
-  year: string | number;
-  month: string | number;
-  day: string | number;
-  usersize: string;
+  gender: string;
+  year: string;
+  month: string;
+  day: string;
+  size: string;
 };
 
 // select Option 타입 정의
 export type OptionType = {
   value: string | number;
   label: string;
+};
+export type TSideBarProps = {
+  isBarOpen: boolean;
+  toggleBar: () => void;
 };

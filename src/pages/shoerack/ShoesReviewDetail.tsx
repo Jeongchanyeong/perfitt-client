@@ -2,41 +2,34 @@
 
 // 더보기 메뉴 추가
 // 로그인 안 했을 때 로그인 link
-// productId 없이 접근했을 때
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import Header from '../../components/common/Header';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import HeaderLayout from '../../layout/HeaderLayout';
 import SRShoeBox from '../../components/contents/shoerack/SRShoeBox';
-import { TShoeData, TShoeInfo } from '../../types/shoerack';
+import { useShoeRackStore } from '../../stores/shoerack.store';
+import { TShoeRackItem } from '../../types/shoerack';
 import { starFillIcon } from '../../assets/images/images';
+import SRDMenu from '../../components/contents/shoerack/SRDMenu';
 
 function ShoesReviewDetail() {
-  // const navigate = useNavigate();
+  const uid = 'qKnJXMMf4xd8KAn9UtGqegZFyjv2'; // uid 가져오기
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const productId = searchParams.get('id');
-  // if (productId === null || '') navigate(-1);
 
-  const [shoeInfo, setShoeInfo] = useState<TShoeInfo>();
-  const [shoeData, setShoeData] = useState<TShoeData>();
+  const { getProductById } = useShoeRackStore();
+  const [shoeData, setShoeData] = useState<TShoeRackItem>();
 
   useEffect(() => {
-    setShoeInfo({
-      productId: productId !== null ? productId : '1010087307',
-      image: 'https://image.a-rt.com/art/product/2022/01/60008_1642143249212.jpg?shrink=580:580',
-      brand: 'NIKE',
-      modelName: 'W NIKE COURT VISION ALTA LTR',
-    });
-    setShoeData({
-      star: 3,
-      length: '잘 맞아요',
-      width: '좁아요',
-      height: '적당해요',
-      cushion: '푹신해요',
-      weight: '가벼워요',
-      size: '정사이즈',
-      review: '등산할 때 신으려고 구매했는데 푹신해서 마음에 들어요. 발이 불편하지 않고 통기성이 좋았어요.',
-    });
+    if (productId === null || '') navigate('/shoe-rack/main');
+    else {
+      const fetchData = async () => {
+        const data = await getProductById(uid, productId);
+        setShoeData(data);
+      };
+      fetchData();
+    }
   }, []);
 
   const shoeDataList = [
@@ -48,17 +41,29 @@ function ShoesReviewDetail() {
     { label: '사이즈 추천', value: shoeData?.size },
   ];
 
+  const [menuOpen, setMenuOpen] = useState(false);
+  const handleMenuOpen = () => {
+    setMenuOpen(prev => !prev);
+  };
+
   return (
-    <>
-      <Header
-        title='신발 등록'
-        back
-      />
-      <div className='p-4 pt-0'>
+    <HeaderLayout
+      title='신발 상세'
+      back
+      rightChild={
+        <SRDMenu
+          uid={uid}
+          productId={productId !== null ? productId : ''}
+          isOpen={menuOpen}
+        />
+      }
+      handleRightBtnClick={handleMenuOpen}
+    >
+      <div className='flex-1 p-4 pt-0 overflow-scroll scrollbar-hide'>
         {/* 기본 정보 */}
         <SRShoeBox
           className='w-full h-[343px] mt-1.5 mb-5'
-          imgSrc={shoeInfo?.image}
+          imgSrc={shoeData?.image}
         />
         <div className='flex space-x-5 items-center'>
           <div className='w-[59px] flex space-x-0.5 justify-end items-center'>
@@ -70,8 +75,8 @@ function ShoesReviewDetail() {
             <span className='text-[24px] leading-9 font-semibold'>{shoeData?.star}</span>
           </div>
           <div className='max-w-[264px] flex flex-col space-y-0.5'>
-            <div className='text-[13px] leading-[15px] text-[#808080]'>{shoeInfo?.brand}</div>
-            <div className='text-[15px] leading-[15px] truncate'>{shoeInfo?.modelName}</div>
+            <div className='text-[13px] leading-[15px] text-[#808080]'>{shoeData?.brand}</div>
+            <div className='text-[15px] leading-[15px] truncate'>{shoeData?.modelName}</div>
           </div>
         </div>
 
@@ -94,7 +99,7 @@ function ShoesReviewDetail() {
           </div>
         </div>
       </div>
-    </>
+    </HeaderLayout>
   );
 }
 

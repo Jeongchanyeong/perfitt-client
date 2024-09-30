@@ -2,60 +2,35 @@
 
 // 뒤로가기
 // 로그인 안 했을 때 로그인 link
-// userInfo type?
-// 정렬 컴포넌트 분리
-// 신발 등록 버튼 link (2개)
 // 무한 스크롤?
 
-import { useEffect, useState } from 'react';
-import Header from '../../components/common/Header';
+import { useEffect } from 'react';
+import HeaderLayout from '../../layout/HeaderLayout';
 import SREmpty from '../../components/contents/shoerack/SREmpty';
 import SRShoeRack from '../../components/contents/shoerack/SRShoeRack';
+import { useUserStore } from '../../stores/user.store';
+import { useShoeRackStore } from '../../stores/shoerack.store';
 import { plusCircleIcon, userIcon } from '../../assets/images/images';
-import { TShoeInfo } from '../../types/shoerack';
 
 function ShoeRack() {
-  const [userInfo, setUserInfo] = useState({
-    name: '',
-    size: '',
-  });
-  const [shoesList, setShoesList] = useState<TShoeInfo[]>();
-
-  console.log('shoesList', shoesList);
+  const { user, fetchUserInfo } = useUserStore();
+  const { shoeRack, fetchShoeRack } = useShoeRackStore();
 
   useEffect(() => {
-    setUserInfo({
-      name: '김이름',
-      size: '240mm',
-    });
-    setShoesList([
-      {
-        productId: '1010087307',
-        modelName: 'W NIKE COURT VISION ALTA LTR',
-        image: 'https://image.a-rt.com/art/product/2022/01/60008_1642143249212.jpg?shrink=580:580',
-      },
-      {
-        productId: '1020108507',
-        modelName: '조그 100 2 맨 엑스트라 와이드',
-        image: 'https://image.a-rt.com/art/product/2024/07/08615_1721974809586.jpg?shrink=580:580',
-      },
-      {
-        productId: '8209459151000',
-        modelName: 'SALOMON X Ultra 4 Mid GTX',
-        image: 'https://perfittdemo.myshopify.com/cdn/shop/files/Untitled_12.png?v=1715936706&width=1946',
-      },
-    ]);
+    // 임시 userInfo 업데이트 (다른 페이지에서 이루어져야 함)
+    const uid = 'qKnJXMMf4xd8KAn9UtGqegZFyjv2';
+    fetchUserInfo(uid);
+
+    fetchShoeRack(uid);
   }, []);
 
   const editUserImg = () => {};
 
   return (
-    <>
-      <Header
-        title='신발장'
-        back
-      />
-
+    <HeaderLayout
+      title='신발장'
+      back
+    >
       <div className='h-full p-4 pt-0 flex flex-col'>
         {/* USER 기본 정보 */}
         <div className='flex gap-5 items-center py-[5px] px-3'>
@@ -76,15 +51,15 @@ function ShoeRack() {
             </button>
           </div>
           <div className='flex flex-col gap-1'>
-            <h3 className='text-[16px] font-semibold leading-5'>{userInfo.name}</h3>
-            <p className='text-[14px] leading-[22px]'>평소 신는 사이즈 | {userInfo.size}</p>
+            <h3 className='text-[16px] font-semibold leading-5'>{user?.name}</h3>
+            <p className='text-[14px] leading-[22px]'>평소 신는 사이즈 | {user?.size}</p>
           </div>
         </div>
 
         {/* 신발장 */}
-        {shoesList === undefined || shoesList.length === 0 ? <SREmpty /> : <SRShoeRack shoesList={shoesList} />}
+        {shoeRack == undefined || shoeRack?.length === 0 ? <SREmpty /> : <SRShoeRack shoesList={shoeRack} />}
       </div>
-    </>
+    </HeaderLayout>
   );
 }
 

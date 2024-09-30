@@ -8,13 +8,14 @@ import ShoesReviewDetail from '../pages/shoerack/ShoesReviewDetail';
 import ShoesSearch from '../pages/shoerack/ShoesSearch';
 import NotFound from '../pages/NotFound';
 import Chat from '../pages/Chat';
-import Like from '../pages/Like';
 import MyFootInfo from '../pages/MyFootInfo';
 import MyPage from '../pages/MyPage';
 import SignUp from '../pages/SignUp';
 import SignIn from '../pages/SignIn';
 import Login from '../pages/Login';
 import AuthProvider from '../service/AuthProvider';
+import Item from '../pages/Item';
+import Bridge from '../pages/Bridge';
 
 const router = createBrowserRouter([
   {
@@ -49,28 +50,33 @@ const router = createBrowserRouter([
         element: <MyPage />,
       },
       {
-        path: '/mypage/item',
-        element: <Like />,
+        path: '/mypage/item/:mode',
+        element: <Item />,
       },
       {
         path: '/mypage/foot',
         element: <MyFootInfo />,
       },
       {
-        path: '/shoe-rack/main',
-        element: <ShoeRack />,
-      },
-      {
-        path: '/shoe-rack/review/:mode',
-        element: <ShoesReviewEdit />,
-      },
-      {
-        path: '/shoe-rack/review',
-        element: <ShoesReviewDetail />,
-      },
-      {
-        path: '/shoe-rack/search',
-        element: <ShoesSearch />,
+        path: '/shoe-rack',
+        children: [
+          {
+            path: 'main',
+            element: <ShoeRack />,
+          },
+          {
+            path: 'review/:mode',
+            element: <ShoesReviewEdit />,
+          },
+          {
+            path: 'review',
+            element: <ShoesReviewDetail />,
+          },
+          {
+            path: 'search',
+            element: <ShoesSearch />,
+          },
+        ],
       },
       {
         path: '*',
@@ -83,6 +89,10 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <Login />,
+      },
+      {
+        path: '/bridge',
+        element: <Bridge />,
       },
     ],
   },

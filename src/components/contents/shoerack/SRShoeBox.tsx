@@ -1,12 +1,18 @@
 import { twMerge } from 'tailwind-merge';
 import { shoeSilhouette } from '../../../assets/images/images';
 
-function SRShoeBox({ className, imgSrc }: { className?: string; imgSrc?: string }) {
+type TSRShoeBox = {
+  className?: string;
+  imgSrc?: string;
+  imgAlt?: string;
+};
+
+function SRShoeBox({ className, imgSrc, imgAlt }: TSRShoeBox) {
   return (
     <div className={twMerge('flex justify-center items-center bg-[#F5F5F5] rounded-md overflow-hidden', className)}>
       <img
         src={imgSrc !== (undefined || '') ? imgSrc : shoeSilhouette}
-        alt='Add shoes'
+        alt={imgAlt !== (undefined || '') ? imgAlt : ''}
         className='w-full h-full object-cover'
       />
     </div>

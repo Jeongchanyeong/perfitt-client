@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import Select, { ActionMeta, SingleValue, StylesConfig, GroupBase } from 'react-select';
+import Select, { StylesConfig, GroupBase } from 'react-select';
 import { OptionType } from '../../../types/sign';
 import { customStyles_base } from './SUISelectCss';
 
@@ -13,11 +13,12 @@ type TSelectProps = {
   label?: string;
   helperText?: string;
   styles?: StylesConfig<OptionType, false, GroupBase<OptionType>>;
+  onSubmit?: (data: any) => void; // onSubmit 추가
 };
 
 // forwardRef로 SUSelect 컴포넌트 정의
 const SUSelect = forwardRef<HTMLDivElement, TSelectProps>(
-  ({ optionData, className, value, onChange, placeholder, label, helperText, styles }, ref) => {
+  ({ optionData, className, value, onChange, placeholder, label, helperText, styles, onSubmit }, ref) => {
     // react-select에서 사용하는 형식으로 optionData 변환
     const options: OptionType[] = optionData.map(option => ({
       value: option.value,
@@ -28,17 +29,14 @@ const SUSelect = forwardRef<HTMLDivElement, TSelectProps>(
     const selectedOption = options.find(option => option.value === value) || null;
 
     // 선택 변경 시 핸들러
-    const handleChange = (
-      newValue: SingleValue<OptionType>, // SingleValue만 사용
-      actionMeta: ActionMeta<OptionType>
-    ) => {
-      if (newValue) {
-        onChange(newValue.value); // 선택된 값 전달
-      } else {
-        onChange(''); // 값이 없을 때(클리어 시) 빈 문자열 전달
+    const handleSelectChange = (selectedOption: OptionType | null) => {
+      if (selectedOption) {
+        onChange(selectedOption.value);
+        if (onSubmit) {
+          onSubmit(selectedOption.value); // 선택된 값으로 onSubmit 호출
+        }
       }
     };
-
     // 에러 상태에 따른 className 설정
 
     return (
@@ -51,7 +49,7 @@ const SUSelect = forwardRef<HTMLDivElement, TSelectProps>(
         </label>
         <Select
           value={selectedOption} // 선택된 옵션을 react-select의 value로 설정
-          onChange={handleChange}
+          onChange={handleSelectChange}
           options={options}
           placeholder={placeholder}
           className={className}
