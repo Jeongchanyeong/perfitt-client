@@ -23,7 +23,7 @@ const UserLoader = ({ uid }: UserLoaderProps) => {
             profile: userInfo?.profile,
             email: userInfo?.email,
             gender: userInfo?.gender,
-            birth: `${userInfo?.birth.year}-${userInfo?.birth.month}-${userInfo?.birth.day}`,
+            birth: `${userInfo?.birth.year}.${userInfo?.birth.month}.${userInfo?.birth.day}`,
             size: userInfo?.size,
           });
         } else {

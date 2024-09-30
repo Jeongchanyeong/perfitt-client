@@ -1,16 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SMChatList from './SMChatList';
-import { TUser } from '../../../types/db';
 import { IChat } from '../../../types/chat';
 import menuIcon from '../../../assets/icons/menu-icon.svg';
 import plusIcon from '../../../assets/icons/plus-mini-icon.svg';
 import userIcon from '../../../assets/icons/user-border-icon.svg';
 import { auth } from '../../../service/firebase';
 import { createNewChat } from '../../../service/CreateNewChat';
-import Logout from '../signin/Logout';
 import { AuthContext } from '../../../service/AuthContext';
-import UserLoader from '../../../stores/UserLoder';
 import { useUserStore } from '../../../stores/UserState';
 
 type TSideMenuProps = {

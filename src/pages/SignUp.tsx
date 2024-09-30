@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { db, auth } from '../service/firebase';
-import { useNavigate } from 'react-router-dom';
 import { FormValues } from '../types/sign';
 import Header from '../components/common/Header';
 import Button from '../components/common/Button';
@@ -12,7 +11,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 const SignUp = () => {
   const [state, setState] = useState<'start' | 'end'>('start');
-  const navigate = useNavigate();
 
   // useForm 훅을 사용하여 폼 관리
   const methods = useForm<FormValues>({
@@ -49,7 +47,6 @@ const SignUp = () => {
       });
 
       alert('회원가입 성공');
-      navigate('chat/signin');
     } catch (e) {
       if (e instanceof Error) {
         console.error('회원가입 실패:', e);

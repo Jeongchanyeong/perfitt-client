@@ -24,7 +24,7 @@ const MyPage = () => {
 
       <UserInfo user={user} />
 
-      <MyPageBottom user={user} />
+      <MyPageBottom />
     </div>
   );
 };
