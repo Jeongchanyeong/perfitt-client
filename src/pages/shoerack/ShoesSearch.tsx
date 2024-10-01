@@ -7,7 +7,7 @@
 // 최근 검색어 몇 개?
 // 무한 스크롤?
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SRSearchHistory from '../../components/contents/shoerack/SRSearchHistory';
 import SRShoeInfo from '../../components/contents/shoerack/SRShoeInfo';
@@ -16,50 +16,42 @@ import { cameraIcon, searchIcon } from '../../assets/images/images';
 import HeaderLayout from '../../layout/HeaderLayout';
 import { TProduct } from '../../types/db';
 import { upsertProduct } from '../../api/upsertProduct';
+import { useSearchStore } from '../../stores/search.store';
+import { postShoesFind } from '../../api/postShoesFind';
 
 function ShoesSearch() {
+  const uid = 'qKnJXMMf4xd8KAn9UtGqegZFyjv2';
   const navigate = useNavigate();
+  const { updateHistory } = useSearchStore();
   const [search, setSearch] = useState('');
   const [shoeData, setShoeData] = useState<TProduct[]>();
   const [selected, setSelected] = useState('');
 
-  useEffect(() => {
-    setShoeData([
-      {
-        image: 'https://image.a-rt.com/art/product/2022/01/60008_1642143249212.jpg?shrink=580:580',
-        link: 'https://m.abcmart.a-rt.com/product/new?prdtNo=1010087307',
-        modelName: 'W NIKE COURT VISION ALTA LTR',
-        brand: 'NIKE',
-        modelNo: 'DM0113',
-        productId: '1010087307',
-      },
-      {
-        image: 'https://image.a-rt.com/art/product/2024/07/08615_1721974809586.jpg?shrink=580:580',
-        link: 'https://grandstage.a-rt.com/product/new?prdtNo=1020108507',
-        modelName: '조그 100 2 맨 엑스트라 와이드',
-        brand: 'ASICS',
-        modelNo: '1011C089',
-        productId: '1020108507',
-      },
-      {
-        brand: 'SALOMON',
-        image: 'https://perfittdemo.myshopify.com/cdn/shop/files/Untitled_12.png?v=1715936706&width=1946',
-        link: 'https://perfittdemo.myshopify.com/products/salomon-x-ultra-4-mid-gtx',
-        modelName: 'SALOMON X Ultra 4 Mid GTX',
-        modelNo: 'L41383400',
-        productId: '8209459151000',
-      },
-    ]);
-  }, []);
+  const searchData = async (text: string) => {
+    try {
+      await updateHistory(uid, text);
+      const products = await postShoesFind(search);
+      setShoeData(products);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const handleSearch = () => {};
+  const handleSearch = (text: string) => {
+    setSearch(text);
+    searchData(text);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') searchData(search);
+  };
 
   const selectShoes = async () => {
     const data = shoeData?.find(shoe => shoe.productId === selected);
     try {
       if (selected !== '' && data !== undefined) {
         const result = await upsertProduct(data);
-        if (result === 'success') navigate(`/shoe-rack/review/add?id=${selected}`);
+        if (result === 'success') navigate(`/shoerack/review/add?id=${selected}`);
         else alert('오류가 발생하였습니다. 다시 시도해주세요.');
       }
     } catch (error) {
@@ -90,6 +82,7 @@ function ShoesSearch() {
               type='text'
               value={search}
               onChange={e => setSearch(e.target.value)}
+              onKeyDown={handleKeyPress}
               placeholder='신발이름, 모델명 겸색'
             />
             <button>
