@@ -11,7 +11,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 const SignUp = () => {
   const [state, setState] = useState<'start' | 'end'>('start');
-
   // useForm 훅을 사용하여 폼 관리
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -72,7 +71,7 @@ const SignUp = () => {
     <>
       <FormProvider {...methods}>
         <Header title='회원가입' />
-        {state === 'start' ? <SUInfo /> : <SUIdetails />}
+        {state === 'start' ? <SUInfo user={null} /> : <SUIdetails user={null} />}
         <div className='px-4 mb-[34px]'>
           <Button onClick={handleNextClick}>{state === 'start' ? '다음' : '가입 완료'}</Button>
         </div>

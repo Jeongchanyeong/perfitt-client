@@ -3,7 +3,7 @@ import { TuserProfileProps } from '../../../types/sign';
 const UserInfo = (user: TuserProfileProps) => {
   return (
     <div>
-      <div className='py-[25px] text-[14px] leading-[16.71px] font-medium'>
+      <div className='px-4 py-[25px] text-[14px] leading-[16.71px] font-medium'>
         <div className=''>내 정보</div>
         <div className=''>
           <div className='pt-[15px] flex flex-row '>
@@ -16,7 +16,9 @@ const UserInfo = (user: TuserProfileProps) => {
           </div>
           <div className='pt-[16px] flex flex-row '>
             <div className='text-[#808080] pr-[84px]'>생년월일</div>
-            <div className=''>{user.user?.birth}</div>
+            <div className=''>
+              {user?.user?.birth ? `${user.user.birth.year}.${user.user.birth.month}.${user.user.birth.day}` : ''}
+            </div>
           </div>
           <div className='pt-[16px] flex flex-row'>
             <div className='text-[#808080] pr-[72px]'>평소사이즈</div>
