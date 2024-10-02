@@ -1,11 +1,15 @@
 export type TUser = {
-  name?: string;
-  email?: string;
-  gender?: string;
-  birth?: string;
-  size?: string;
+  name: string;
+  email: string;
+  gender: string;
+  birth: {
+    year: string;
+    month: string;
+    day: string;
+  };
+  size: string;
   profile?: string;
-}
+};
 
 export type TProduct = {
   productId: string;
