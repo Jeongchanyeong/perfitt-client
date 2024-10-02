@@ -9,16 +9,17 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../../service/firebase';
 
 const DeleteUser = () => {
+  const navigate = useNavigate();
   const auth = getAuth();
   const user = auth.currentUser;
-  const navigate = useNavigate();
+  const email = user?.email;
+  const uid = user?.uid;
   const methods = useForm<FormValues>({
     defaultValues: {
-      email: '',
+      email: email ?? undefined,
       password: '',
     },
   });
-  const uid = user?.uid;
 
   const { handleSubmit, control } = methods; // handleSubmit과 control을 가져옴
 
@@ -36,7 +37,8 @@ const DeleteUser = () => {
         await deleteDoc(doc(db, 'user', uid));
         alert('계정이 성공적으로 삭제되었습니다.');
         auth.signOut();
-        navigate('/chat/signin');
+        window.location.reload();
+        navigate('/chat');
       } catch (error) {
         alert('계정 삭제 중 오류 발생: ' + (error instanceof Error ? error.message : '알 수 없는 오류'));
       }
@@ -67,7 +69,7 @@ const DeleteUser = () => {
                   className='px-4 py-3.5'
                   id='email'
                   {...field}
-                  placeholder='이메일을 입력해 주세요'
+                  readOnly
                   isError={!!fieldState.error}
                   helperText={fieldState.error?.message}
                 />

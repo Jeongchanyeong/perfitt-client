@@ -27,7 +27,7 @@ const MyPageBottom = () => {
 
   return (
     <>
-      <div className='pt-[25px] '>
+      <div className='px-4 pt-[25px] '>
         <div className='flex flex-row justify-between py-[16px] border-b-[1px] border-[#E4E4E7] mx-[-16px] pl-[16px]'>
           <div>내 정보 수정</div>
           <button onClick={toggleEditModal}>

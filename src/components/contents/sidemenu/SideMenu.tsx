@@ -64,6 +64,7 @@ const SideMenu = ({ isMenuOpen, toggleMenu }: TSideMenuProps) => {
   const logout = () => {
     auth.signOut();
     handleCreateChat();
+    window.location.reload();
   };
 
   return (

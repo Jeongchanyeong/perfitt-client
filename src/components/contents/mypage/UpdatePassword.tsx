@@ -7,17 +7,18 @@ import Header from '../../common/Header';
 import { useNavigate } from 'react-router-dom';
 
 const UpdatePassword = () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const email = user?.email;
   const methods = useForm<FormValues>({
     defaultValues: {
-      email: '',
+      email: email ?? undefined,
       password: '',
       new_password: '',
     },
   });
 
   const { control, handleSubmit } = methods;
-  const auth = getAuth();
-  const user = auth.currentUser;
   const navigate = useNavigate();
 
   // 비밀번호 업데이트 함수
@@ -67,6 +68,7 @@ const UpdatePassword = () => {
                   id='email'
                   {...field}
                   placeholder='이메일을 입력해 주세요'
+                  readOnly
                   isError={!!fieldState.error}
                   helperText={fieldState.error?.message}
                 />
