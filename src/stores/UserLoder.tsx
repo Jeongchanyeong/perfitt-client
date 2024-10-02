@@ -18,12 +18,17 @@ const UserLoader = ({ uid }: UserLoaderProps) => {
 
         if (snapshot.exists()) {
           const userInfo = snapshot.data();
+
           setUser({
             name: userInfo?.name,
             profile: userInfo?.profile,
             email: userInfo?.email,
             gender: userInfo?.gender,
-            birth: `${userInfo?.birth.year}.${userInfo?.birth.month}.${userInfo?.birth.day}`,
+            birth: {
+              year: userInfo?.birth.year,
+              month: userInfo?.birth.month,
+              day: userInfo?.birth.day,
+            },
             size: userInfo?.size,
           });
         } else {
