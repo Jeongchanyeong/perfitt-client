@@ -79,7 +79,7 @@ function SUInfo(user: TuserProfileProps) {
           <Controller
             name='name'
             control={control}
-            rules={{ required: { value: true, message: '이름을 입력해주세요' } }}
+            rules={{ required: { value: true, message: '이름을 입력해 주세요' } }}
             render={({ field, fieldState }) => (
               <SUInput
                 label='이름'
