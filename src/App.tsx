@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { auth } from './service/firebase';
-import SUIBar from './components/common/ModalBar';
 import SignUp from './pages/SignUp';
 import BottomSheet from './components/common/ModalBar';
 
