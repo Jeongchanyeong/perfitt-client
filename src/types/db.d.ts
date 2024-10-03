@@ -1,13 +1,15 @@
+import firebase from "firebase/compat/app";
+
 export type TUser = {
-  name: string;
-  email: string;
-  gender: string;
-  birth: {
-    year: string;
-    month: string;
-    day: string;
-  };
-  size: string;
+  name?: string;
+  email?: string;
+  gender?: string;
+  birth?: {
+    year: string | number;
+    month: string | number;
+    day: string | number;
+  }
+  size?: string;
   profile?: string;
 };
 
@@ -20,6 +22,13 @@ export type TProduct = {
   image?: string;
 };
 
+export type TBrand = {
+  brandId: string;
+  nameKor: string;
+  nameEn: string;
+  image: string;
+}
+
 export type TShoeRackReview = {
   star: number;
   datetime?: Date | firebase.firestore.Timestamp;
@@ -31,3 +40,21 @@ export type TShoeRackReview = {
   size: string;
   review: string;
 };
+
+export type TSearchHistory = {
+  value: string;
+  datetime: Date | firebase.firestore.Timestamp;
+}
+
+export type TChat = {
+  chatId: string;
+  title?: string;
+  message?: {
+    sender: 'user' | 'AI';
+    message: string;
+    image?: string;
+    products?: TProduct[];
+    dislike?: boolean;
+  }
+  datetime: Date | firebase.firestore.Timestamp;
+}

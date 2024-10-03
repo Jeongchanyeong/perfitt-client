@@ -1,16 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { xGrayIcon } from '../../../assets/images/images';
+import { useSearchStore } from '../../../stores/search.store';
 
-function SRSearchHistory({ handleSearch }: { handleSearch: () => void }) {
-  const [searchData, setSearchData] = useState<string[]>();
+function SRSearchHistory({ handleSearch }: { handleSearch: (text: string) => void }) {
+  const uid = 'qKnJXMMf4xd8KAn9UtGqegZFyjv2';
+  const { searchHistory, fetchHistory, deleteHistory, deleteAllHistory } = useSearchStore();
 
   useEffect(() => {
-    setSearchData(['호카 고어텍스', '호카 챌린저', '스피리테인', '뉴발란스', '클로그']);
+    fetchHistory(uid);
   }, []);
 
-  const deleteAll = () => {};
-  const deleteSearchData = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const deleteAll = () => {
+    deleteAllHistory(uid);
+  };
+
+  const deleteSearchData = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, text: string) => {
     e.stopPropagation();
+    deleteHistory(uid, text);
   };
 
   return (
@@ -25,21 +31,21 @@ function SRSearchHistory({ handleSearch }: { handleSearch: () => void }) {
         </button>
       </div>
       <div className='border-b-[6px] border-[#F5F5F5]'>
-        {searchData === undefined || searchData.length === 0 ? (
+        {searchHistory?.length === 0 ? (
           <div className='py-[31px] text-[14px] leading-[17px] text-[#A4A4A4] text-center'>최근 검색어가 없습니다.</div>
         ) : (
           <div className='mt-4'>
-            {searchData?.map((data, index) => (
-              <button
+            {searchHistory?.map((data, index) => (
+              <div
                 key={index}
-                className='relative w-full h-[42px] py-2 px-4
+                className='relative w-full h-[42px] py-2 px-4 cursor-pointer
                 border-t border-[#F5F5F5] text-[14.5px] text-left hover:bg-[#F5F5F5]'
-                onClick={handleSearch}
+                onClick={() => handleSearch(data.value)}
               >
-                {data}
+                {data.value}
                 <button
                   className='absolute top-0 right-0 px-4 h-[42px]'
-                  onClick={deleteSearchData}
+                  onClick={e => deleteSearchData(e, data.value)}
                 >
                   <img
                     src={xGrayIcon}
@@ -47,7 +53,7 @@ function SRSearchHistory({ handleSearch }: { handleSearch: () => void }) {
                     className='w-[15px] h-[15px]'
                   />
                 </button>
-              </button>
+              </div>
             ))}
           </div>
         )}
