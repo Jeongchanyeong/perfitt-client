@@ -1,23 +1,14 @@
-// 사이드 메뉴
-
-// 리스트 날짜별 분류
-// 데이터 가져올 때 지난 7일까지만 가져오기
-// user id 값 읽어서 name, profile 가져오기
-// 로그안 안되어있을 때 로그인 페이지 link
-// 채팅 리스트 드래그 / 공유하기, 삭제하기
-// 로그아웃
-// 로그인/회원가입 링크 변경
-
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SMChatList from './SMChatList';
-import { TUser } from '../../../types/db';
 import { IChat } from '../../../types/chat';
 import menuIcon from '../../../assets/icons/menu-icon.svg';
 import plusIcon from '../../../assets/icons/plus-mini-icon.svg';
 import userIcon from '../../../assets/icons/user-border-icon.svg';
 import { auth } from '../../../service/firebase';
 import { createNewChat } from '../../../service/CreateNewChat';
+import { AuthContext } from '../../../service/AuthContext';
+import { useUserStore } from '../../../stores/UserState';
 
 type TSideMenuProps = {
   isMenuOpen: boolean;
@@ -26,41 +17,38 @@ type TSideMenuProps = {
 
 const SideMenu = ({ isMenuOpen, toggleMenu }: TSideMenuProps) => {
   const navigate = useNavigate();
-  const [chatData, setChatData] = useState<IChat[]>();
-  const [user, setUser] = useState<TUser>();
+  const [chatData, setChatData] = useState<IChat[]>([]);
+  const userdata = useContext(AuthContext);
+  const uid = userdata?.uid;
+  const user = useUserStore(state => state.user);
 
   useEffect(() => {
-    setChatData([
-      {
-        id: '00',
-        title: '최근 가장 인기있는 여성 운동화',
-        date: '2024-09-10',
-      },
-      {
-        id: '01',
-        title: '비 오는 날 신기 좋은 레인부츠 추천',
-        date: '2024-09-19',
-      },
-      {
-        id: '02',
-        title: '여름 슬리퍼 추천',
-        date: '2024-09-19',
-      },
-      {
-        id: '03',
-        title: '가벼운 러닝화',
-        date: '2024-09-18',
-      },
-      {
-        id: '04',
-        title: '20대 여성이 많이 찾는 브랜드',
-        date: '2024-09-18',
-      },
-    ]);
-    setUser({
-      name: '김펄핏',
-    });
-  }, []);
+    const loadData = async () => {
+      if (!uid) {
+        navigate('/chat/signin'); // 로그인하지 않은 경우 이동
+      } else {
+        // await fetchChatData(); // 밑에 코드 수정후 활성화
+      }
+    };
+
+    loadData(); // 데이터 로드 함수 호출
+  }, [uid]);
+
+  // //채팅데이터 불러오는 코드
+  // const fetchChatData = async () => {
+  //   const today = new Date();
+  //   const lastWeek = new Date(today);
+  //   lastWeek.setDate(today.getDate() - 7); // 7일 전 날짜
+
+  //   const chatQuery = query(collection(db, 'chat'), where('createdAt', '>=', lastWeek), orderBy('createdAt', 'desc'));
+  //   const snapshot = await getDocs(chatQuery);
+  //   const chats = snapshot.docs.map(doc => ({
+  //     id: doc.id,
+  //     ...doc.data(),
+  //   }));
+
+  //   setChatData(chats);
+  // };
 
   const handleLink = (link: string) => {
     toggleMenu();
@@ -76,6 +64,7 @@ const SideMenu = ({ isMenuOpen, toggleMenu }: TSideMenuProps) => {
   const logout = () => {
     auth.signOut();
     handleCreateChat();
+    window.location.reload();
   };
 
   return (

@@ -8,7 +8,7 @@ export interface IMessage {
 }
 
 export interface IChat {
-  id?: string; // ? 삭제
+  id: string; // ? 삭제
   title?: string; // ? 삭제
   chatMessage?: IMessage[];
   date?: string;

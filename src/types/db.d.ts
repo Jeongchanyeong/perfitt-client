@@ -5,13 +5,13 @@ export type TUser = {
   email?: string;
   gender?: string;
   birth?: {
-    year: number;
-    month: number;
-    day: number;
+    year: string | number;
+    month: string | number;
+    day: string | number;
   }
   size?: string;
   profile?: string;
-}
+};
 
 export type TProduct = {
   productId: string;

@@ -25,6 +25,7 @@ export type FormValues = {
   month: string;
   day: string;
   size: string;
+  new_password: string;
 };
 
 // select Option 타입 정의
@@ -35,4 +36,7 @@ export type OptionType = {
 export type TSideBarProps = {
   isBarOpen: boolean;
   toggleBar: () => void;
+};
+export type TuserProfileProps = {
+  user: TUser | null; // user가 null일 수도 있음
 };

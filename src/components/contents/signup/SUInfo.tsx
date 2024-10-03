@@ -2,8 +2,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import SUInput from './SUInput';
 import SUSelect from './SUSelect';
 import { customStyles_birth } from './SUISelectCss';
+import { TuserProfileProps } from '../../../types/sign';
 
-function SUInfo() {
+function SUInfo(user: TuserProfileProps) {
   const { control } = useFormContext(); // useFormContext로 control 가져오기
 
   const yearList = Array.from({ length: 70 }, (_, i) => ({
@@ -42,6 +43,7 @@ function SUInfo() {
                 {...field}
                 placeholder='이메일을 입력해 주세요'
                 isError={!!fieldState.error}
+                readOnly={!!user}
                 helperText={fieldState.error?.message}
               />
             )}
@@ -67,6 +69,7 @@ function SUInfo() {
                 {...field}
                 placeholder='비밀번호를 입력해 주세요'
                 isError={!!fieldState.error}
+                readOnly={!!user}
                 helperText={fieldState.error?.message}
               />
             )}
@@ -76,7 +79,7 @@ function SUInfo() {
           <Controller
             name='name'
             control={control}
-            rules={{ required: { value: true, message: '이름을 입력해주세요' } }}
+            rules={{ required: { value: true, message: '이름을 입력해 주세요' } }}
             render={({ field, fieldState }) => (
               <SUInput
                 label='이름'
@@ -84,7 +87,7 @@ function SUInfo() {
                 type='text'
                 id='username'
                 {...field}
-                placeholder='이름을 입력해 주세요'
+                placeholder='이름을 입력해주세요.'
                 isError={!!fieldState.error}
                 helperText={fieldState.error?.message}
               />
@@ -123,7 +126,7 @@ function SUInfo() {
                   label='생년월일'
                   optionData={yearList}
                   className='w-full rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
-                  placeholder='년'
+                  placeholder={user ? field.value : '년'}
                   value={field.value}
                   onChange={field.onChange}
                   helperText={fieldState.error?.message || ''}
@@ -141,7 +144,7 @@ function SUInfo() {
                   className='w-full rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder='월'
+                  placeholder={user ? field.value : '월'}
                   helperText={fieldState.error?.message || ''}
                   styles={customStyles_birth}
                 />
@@ -157,7 +160,7 @@ function SUInfo() {
                   className='w-full rounded text-[16px] leading-5 font-semibold placeholder-[#A1A1AA]'
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder='일'
+                  placeholder={user ? field.value : '일'}
                   helperText={fieldState.error?.message || ''}
                   styles={customStyles_birth}
                 />
