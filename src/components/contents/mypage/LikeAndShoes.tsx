@@ -1,9 +1,15 @@
+import { useNavigate } from 'react-router-dom';
 import like from '../../../assets/images/mypage-like.svg';
 import shoes from '../../../assets/images/mypage-shoes.svg';
 
 const LikeAndShoes = () => {
-  const UserlikeList = () => {};
-  const UsershoesList = () => {};
+  const navicate = useNavigate();
+  const UserlikeList = () => {
+    navicate('/mypage/item/like');
+  };
+  const UsershoesList = () => {
+    navicate('/shoe-rack/main');
+  };
 
   return (
     <>

@@ -38,9 +38,9 @@ const SignUp = () => {
         email: data.email,
         gender: data.gender,
         birth: {
-          year: parseInt(data.year.slice(0, -1)),
-          month: parseInt(data.month.slice(0, -1)),
-          day: parseInt(data.day.slice(0, -1)),
+          year: data.year,
+          month: data.month,
+          day: data.day,
         },
         size: data.size.split('/')[0],
       });
