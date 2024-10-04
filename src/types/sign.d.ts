@@ -21,9 +21,9 @@ export type FormValues = {
   password: string;
   name: string;
   gender: string;
-  year: string;
-  month: string;
-  day: string;
+  year: string | number;
+  month: string | number;
+  day: string | number;
   size: string;
   new_password: string;
 };
