@@ -108,7 +108,7 @@ const SideMenu = ({ isMenuOpen, toggleMenu }: TSideMenuProps) => {
             <SMChatList
               date={'오늘'}
               chatlist={chatData}
-              handleLink={handleLink}
+              // handleLink={handleLink}
             />
           )}
         </div>
