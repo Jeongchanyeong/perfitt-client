@@ -117,7 +117,7 @@ const SideMenu = ({ isMenuOpen, toggleMenu }: TSideMenuProps) => {
         <div className='flex flex-col py-[9px] border-y-[1px] border-[#E4E4E7] text-[16px] leading-6'>
           <button
             className='py-[7px] text-left hover:text-[#A1A1AA]'
-            onClick={() => handleLink('/mypage/item')}
+            onClick={() => handleLink('/mypage/item/like')}
           >
             좋아요 | 최근 본
           </button>
